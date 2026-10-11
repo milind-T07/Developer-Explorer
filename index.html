@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="GitHub Developer Explorer — Next-Gen Developer Analytics, Repository Insights, and Language Breakdown." />
+  <title>GitHub Developer Explorer — Advanced Developer Analytics</title>
+
+  <!-- Google Fonts Preconnect -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <!-- CSS Design System -->
+  <link rel="stylesheet" href="./css/variables.css" />
+  <link rel="stylesheet" href="./css/base.css" />
+  <link rel="stylesheet" href="./css/layout.css" />
+  <link rel="stylesheet" href="./css/components.css" />
+  <link rel="stylesheet" href="./css/responsive.css" />
+</head>
+
+<body>
+  <!-- Main Application Layout Grid -->
+  <div class="app">
+
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar" id="mainSidebar">
+      <button class="sidebar__close" id="menuClose" aria-label="Close navigation menu">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+
+      <div>
+        <div class="sidebar__brand">
+          <div class="sidebar__logo-wrapper">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+            </svg>
+          </div>
+          <div>
+            <h1 class="sidebar__title">DevExplorer</h1>
+            <p class="sidebar__subtitle">GitHub Analytics v2.5</p>
+          </div>
+        </div>
+
+        <nav class="sidebar__nav" aria-label="Main navigation">
+          <a href="#overview" class="sidebar__link active">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+            <span>Overview</span>
+          </a>
+          <a href="#repositories" class="sidebar__link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+            <span>Repositories</span>
+          </a>
+          <a href="#languages" class="sidebar__link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+            <span>Languages</span>
+          </a>
+        </nav>
+      </div>
+
+      <div class="sidebar__footer">
+        <div class="theme-picker">
+          <span class="theme-picker__label">Accent</span>
+          <div class="theme-picker__options">
+            <button class="theme-dot theme-dot--indigo active" data-theme="indigo" title="Indigo"></button>
+            <button class="theme-dot theme-dot--cyan" data-theme="cyan" title="Cyan"></button>
+            <button class="theme-dot theme-dot--emerald" data-theme="emerald" title="Emerald"></button>
+            <button class="theme-dot theme-dot--amber" data-theme="amber" title="Amber"></button>
+            <button class="theme-dot theme-dot--violet" data-theme="violet" title="Violet"></button>
+            <button class="theme-dot theme-dot--rose" data-theme="rose" title="Rose"></button>
+          </div>
+        </div>
+
+        <div class="api-status">
+          <span class="api-status__dot"></span>
+          <span id="rateLimitText">GitHub API Live</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Mobile Header -->
+    <header class="mobile-header">
+      <div class="mobile-header__brand">
+        <div class="sidebar__logo-wrapper" style="width:36px; height:36px;">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+            <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+          </svg>
+        </div>
+        <h2 style="font-size:1.1rem; font-weight:800;" class="font-heading">DevExplorer</h2>
+      </div>
+      <button class="mobile-menu-toggle" id="menuToggle" aria-label="Open menu">
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
+    </header>
+    <div class="mobile-menu-overlay" id="menuOverlay"></div>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <!-- Topbar Header -->
+      <header class="topbar">
+        <div class="topbar__left">
+          <p class="topbar__eyebrow">GitHub Analytics Suite</p>
+          <h2 class="topbar__title font-heading">Developer Explorer</h2>
+        </div>
+      </header>
+
+      <!-- Hero Search Section -->
+      <section class="hero" id="overview">
+        <div class="hero__content">
+          <span class="hero__badge">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+            Explore Developer Insights
+          </span>
+          <h2 class="hero__title font-heading">Discover the GitHub Universe</h2>
+          <p class="hero__description">
+            Search any developer handle to analyze public repositories, language distributions, stargazers, forks, and profile metrics in real-time.
+          </p>
+
+          <div class="search-container">
+            <form class="search-form" id="searchForm">
+              <div class="search-form__input-wrapper">
+                <svg class="search-form__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                <input
+                  type="text"
+                  id="usernameInput"
+                  class="search-form__input"
+                  placeholder="Enter GitHub username (e.g. torvalds, gaearon, yyx99)..."
+                  autocomplete="off"
+                  spellcheck="false"
+                />
+                <span class="search-form__shortcut">⌘K</span>
+              </div>
+              <button class="search-form__button" type="submit">
+                <span>Explore</span>
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+              </button>
+            </form>
+
+            <!-- Quick Presets -->
+            <div class="preset-devs" id="presetDevsContainer">
+              <span class="preset-devs__label">Featured Presets:</span>
+              <button class="preset-chip" data-username="torvalds">
+                <img src="https://github.com/torvalds.png" class="preset-chip__avatar" alt="torvalds" />
+                Linus Torvalds
+              </button>
+              <button class="preset-chip" data-username="gaearon">
+                <img src="https://github.com/gaearon.png" class="preset-chip__avatar" alt="gaearon" />
+                Dan Abramov
+              </button>
+              <button class="preset-chip" data-username="yyx99">
+                <img src="https://github.com/yyx99.png" class="preset-chip__avatar" alt="yyx99" />
+                Evan You
+              </button>
+              <button class="preset-chip" data-username="karpathy">
+                <img src="https://github.com/karpathy.png" class="preset-chip__avatar" alt="karpathy" />
+                Andrej Karpathy
+              </button>
+              <button class="preset-chip" data-username="rich-harris">
+                <img src="https://github.com/rich-harris.png" class="preset-chip__avatar" alt="rich-harris" />
+                Rich Harris
+              </button>
+            </div>
+
+            <!-- Recent Searches -->
+            <div class="recent-searches" id="recentSearches"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Status Banner -->
+      <section class="status-section" id="status">
+        <div class="status-card status-card--info" id="statusCard">
+          <div class="status-card__icon-wrapper">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+          </div>
+          <div>
+            <h3 class="status-card__title">Ready to Explore</h3>
+            <p class="status-card__message">Enter a GitHub username above or click one of the quick presets.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Metrics Stats Grid -->
+      <section class="stats-grid" aria-label="Developer statistics">
+        <article class="stat-card">
+          <div class="stat-card__header">
+            <span class="stat-card__label">Public Repos</span>
+            <div class="stat-card__icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+            </div>
+          </div>
+          <h3 class="stat-card__value" id="publicRepos">0</h3>
+        </article>
+
+        <article class="stat-card">
+          <div class="stat-card__header">
+            <span class="stat-card__label">Followers</span>
+            <div class="stat-card__icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+            </div>
+          </div>
+          <h3 class="stat-card__value" id="followers">0</h3>
+        </article>
+
+        <article class="stat-card">
+          <div class="stat-card__header">
+            <span class="stat-card__label">Following</span>
+            <div class="stat-card__icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><polyline points="17 11 19 13 23 9"></polyline></svg>
+            </div>
+          </div>
+          <h3 class="stat-card__value" id="following">0</h3>
+        </article>
+
+        <article class="stat-card">
+          <div class="stat-card__header">
+            <span class="stat-card__label">Total Stars</span>
+            <div class="stat-card__icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+            </div>
+          </div>
+          <h3 class="stat-card__value" id="totalStars">0</h3>
+        </article>
+
+        <article class="stat-card">
+          <div class="stat-card__header">
+            <span class="stat-card__label">Total Forks</span>
+            <div class="stat-card__icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="18" r="3"></circle><circle cx="6" cy="6" r="3"></circle><circle cx="18" cy="6" r="3"></circle><path d="M18 9v1a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V9"></path><path d="M12 12v3"></path></svg>
+            </div>
+          </div>
+          <h3 class="stat-card__value" id="totalForks">0</h3>
+        </article>
+      </section>
+
+      <!-- Dashboard Two-Column Grid -->
+      <section class="dashboard-grid">
+        <!-- Developer Profile Card -->
+        <article class="profile-card" id="profile">
+          <div class="profile-card__banner" id="profileBannerBg"></div>
+          <div class="profile-card__body">
+            <div class="profile-card__avatar-wrapper">
+              <img src="" alt="Avatar" class="profile-card__avatar" id="userAvatar" />
+              <div class="profile-card__avatar-placeholder" id="userAvatarPlaceholder">
+                <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+              </div>
+            </div>
+
+            <h3 class="profile-card__name font-heading" id="userName">Developer Name</h3>
+            <p class="profile-card__username" id="userUsername">@username</p>
+            <p class="profile-card__bio" id="userBio">Search for a GitHub username to load developer profile insights.</p>
+
+            <div class="profile-card__details" id="userDetails"></div>
+
+            <div class="profile-card__actions">
+              <a href="#" class="btn btn--primary" id="githubProfileLink" target="_blank" rel="noopener noreferrer">
+                <span>View GitHub</span>
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+              </a>
+              <button class="btn btn--secondary" id="copyProfileBtn">
+                <span>Copy Link</span>
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Language Distribution Breakdown -->
+        <article class="language-card" id="languages">
+          <div class="section-header">
+            <div>
+              <p class="section-header__eyebrow">Repository Analytics</p>
+              <h3 class="section-header__title font-heading">Language Distribution</h3>
+            </div>
+          </div>
+
+          <!-- Multi-Segmented Progress Bar -->
+          <div class="segmented-bar" id="segmentedLangBar"></div>
+
+          <div class="language-list" id="languageList">
+            <p class="empty-text">Language usage will appear after searching a developer.</p>
+          </div>
+        </article>
+      </section>
+
+      <!-- Repositories Section -->
+      <section class="repositories-section" id="repositories">
+        <div class="section-header">
+          <div>
+            <p class="section-header__eyebrow">Public Repositories</p>
+            <h3 class="section-header__title font-heading">Repositories</h3>
+          </div>
+        </div>
+
+        <div class="repo-filter-bar">
+          <div class="repo-filter-bar__left">
+            <div class="repo-search-wrapper">
+              <svg class="repo-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+              <input type="text" id="repoSearchInput" class="repo-search-input" placeholder="Filter repositories by name, topic, or description..." />
+            </div>
+          </div>
+
+          <div class="repo-filter-bar__right">
+            <select id="filterLanguage" class="repo-select">
+              <option value="all">All Languages</option>
+            </select>
+
+            <select id="sortRepos" class="repo-select">
+              <option value="stars">Most Stars</option>
+              <option value="forks">Most Forks</option>
+              <option value="updated">Recently Updated</option>
+              <option value="name">Name A-Z</option>
+              <option value="size">Size</option>
+            </select>
+
+            <div class="view-toggle">
+              <button class="view-btn active" id="viewGridBtn" title="Grid View">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+              </button>
+              <button class="view-btn" id="viewListBtn" title="List View">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Topic Pills Container -->
+        <div class="topic-filter-bar" id="topicFilterContainer"></div>
+
+        <div class="repositories-grid" id="repositoriesGrid">
+          <article class="repo-empty-card">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <h4>No developer profile loaded</h4>
+            <p>Enter a username above or choose a preset to start exploring.</p>
+          </article>
+        </div>
+      </section>
+
+      <!-- Footer -->
+      <footer class="footer">
+        <p>Built with Vanilla HTML5, Modern CSS Glassmorphic Aesthetics, and GitHub REST API.</p>
+        <p>GitHub Developer Explorer v2.5</p>
+      </footer>
+    </main>
+  </div>
+
+  <!-- Repository Detail Pop-up Modal -->
+  <div class="modal-overlay" id="repoDetailModal">
+    <div class="modal-container" id="repoModalBody"></div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- JavaScript Files -->
+  <script src="./js/config.js"></script>
+  <script src="./js/state.js"></script>
+  <script src="./js/utils.js"></script>
+  <script src="./js/api.js"></script>
+  <script src="./js/render.js"></script>
+  <script src="./js/main.js"></script>
+</body>
+</html>

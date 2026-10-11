@@ -1,0 +1,129 @@
+@media (max-width: 1200px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 900px) {
+  .app {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 280px;
+    transform: translateX(-100%);
+    transition: transform var(--transition-normal);
+  }
+
+  body.sidebar-open .sidebar {
+    transform: translateX(0);
+  }
+
+  .mobile-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.5rem;
+    background: var(--bg-sidebar);
+    border-bottom: 1px solid var(--border-color);
+    position: sticky;
+    top: 0;
+    z-index: 90;
+  }
+
+  .mobile-header__brand {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .mobile-menu-toggle {
+    color: var(--text-primary);
+    padding: 0.4rem;
+  }
+
+  .mobile-menu-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+    z-index: 95;
+    opacity: 0;
+    visibility: hidden;
+    transition: all var(--transition-normal);
+  }
+
+  body.sidebar-open .mobile-menu-overlay {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .sidebar__close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    color: var(--text-muted);
+  }
+
+  .main-content {
+    padding: 1.25rem;
+  }
+
+  .repositories-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hero {
+    padding: 2rem 1.5rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .stats-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .search-form {
+    flex-direction: column;
+  }
+
+  .search-form__button {
+    width: 100%;
+  }
+
+  .repo-filter-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .repo-filter-bar__right {
+    justify-content: space-between;
+  }
+
+  .profile-card__actions {
+    grid-template-columns: 1fr;
+  }
+
+  .topbar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+}
+
+@media (max-width: 420px) {
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+}
