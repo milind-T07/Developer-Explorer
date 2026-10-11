@@ -15,10 +15,29 @@ const API_ENDPOINTS = {
   user: (username) => `${GITHUB_API_BASE_URL}/users/${username}`,
   repositories: (username, page = 1, perPage = 100) =>
     `${GITHUB_API_BASE_URL}/users/${username}/repos?per_page=${perPage}&page=${page}&sort=updated`,
+  searchRepositories: (query, page = 1, perPage = 30, sort = "", order = "desc") => {
+    let url = `${GITHUB_API_BASE_URL}/search/repositories?q=${encodeURIComponent(query)}&page=${page}&per_page=${perPage}`;
+    if (sort && sort !== "best-match") {
+      url += `&sort=${encodeURIComponent(sort)}&order=${order}`;
+    }
+    return url;
+  },
   repo: (owner, repo) => `${GITHUB_API_BASE_URL}/repos/${owner}/${repo}`,
   readme: (owner, repo) => `${GITHUB_API_BASE_URL}/repos/${owner}/${repo}/readme`,
   rateLimit: () => `${GITHUB_API_BASE_URL}/rate_limit`,
 };
+
+// Popular global repository search suggestions
+const POPULAR_REPO_SUGGESTIONS = [
+  "frontend",
+  "react dashboard",
+  "portfolio website",
+  "AI traffic management",
+  "machine learning",
+  "expense tracker",
+  "next.js ecommerce",
+  "beginner friendly python projects"
+];
 
 // Categorized preset developers for rich exploration
 const PRESET_DEVELOPERS = [

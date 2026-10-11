@@ -265,30 +265,6 @@
   gap: 0.75rem;
 }
 
-/* Languages Section Layout */
-.languages-section {
-  padding: 1.5rem;
-  border-radius: var(--border-radius-xl);
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
-  box-shadow: var(--shadow-card);
-}
-
-.languages-summary-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1rem;
-  margin-bottom: 1.5rem;
-}
-
-.languages-cards-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 1.15rem;
-  margin-top: 1.5rem;
-}
 
 /* Compare Section Layout */
 .compare-section {

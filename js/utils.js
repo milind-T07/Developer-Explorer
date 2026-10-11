@@ -440,6 +440,87 @@ function exportProfileAsJson(user, repositories) {
   downloadFile(`${user.login}_github_analytics.json`, jsonContent, "application/json");
 }
 
+// Global Repository Search CSV Export Generator
+function exportGlobalRepositoriesAsCsv(query, repositories) {
+  const repos = repositories || [];
+  const headers = [
+    "Repository Name",
+    "Owner",
+    "Description",
+    "Primary Language",
+    "Stargazers",
+    "Forks",
+    "Open Issues",
+    "Visibility",
+    "Last Updated",
+    "GitHub URL"
+  ];
+
+  const escapeCsv = (val) => {
+    if (val === null || val === undefined) return '""';
+    const clean = String(val).replace(/"/g, '""');
+    return `"${clean}"`;
+  };
+
+  const rows = repos.map((r) => [
+    escapeCsv(r.name),
+    escapeCsv(r.owner ? r.owner.login : ""),
+    escapeCsv(r.description || ""),
+    escapeCsv(r.language || ""),
+    r.stargazers_count || 0,
+    r.forks_count || 0,
+    r.open_issues_count || 0,
+    escapeCsv(r.visibility || "public"),
+    escapeCsv(r.updated_at),
+    escapeCsv(r.html_url)
+  ].join(","));
+
+  const metaHeader = [
+    `# GitHub Repository Discovery Export for "${query || 'all'}"`,
+    `# Results Exported: ${repos.length}`,
+    `# Export Date: ${new Date().toISOString()}`,
+    ""
+  ].join("\n");
+
+  const safeQuery = (query || "repositories").replace(/[^a-z0-9_-]/gi, "_");
+  const csvContent = metaHeader + headers.join(",") + "\n" + rows.join("\n");
+  downloadFile(`github_discovery_${safeQuery}.csv`, csvContent, "text/csv;charset=utf-8;");
+}
+
+// Global Repository Search JSON Export Generator
+function exportGlobalRepositoriesAsJson(query, repositories, totalCount = 0) {
+  const repos = repositories || [];
+  const exportData = {
+    metadata: {
+      generatedBy: "DevExplorer - Repository Discovery",
+      generatedAt: new Date().toISOString(),
+      query: query,
+      totalMatchesOnGitHub: totalCount,
+      exportedCount: repos.length
+    },
+    repositories: repos.map((r) => ({
+      name: r.name,
+      full_name: r.full_name,
+      owner: r.owner ? { login: r.owner.login, avatar_url: r.owner.avatar_url, html_url: r.owner.html_url } : null,
+      html_url: r.html_url,
+      description: r.description,
+      language: r.language,
+      stargazers_count: r.stargazers_count,
+      forks_count: r.forks_count,
+      open_issues_count: r.open_issues_count,
+      visibility: r.visibility,
+      topics: r.topics || [],
+      homepage: r.homepage,
+      created_at: r.created_at,
+      updated_at: r.updated_at
+    }))
+  };
+
+  const safeQuery = (query || "repositories").replace(/[^a-z0-9_-]/gi, "_");
+  const jsonContent = JSON.stringify(exportData, null, 2);
+  downloadFile(`github_discovery_${safeQuery}.json`, jsonContent, "application/json");
+}
+
 // Markdown Summary Generator
 function generateProfileMarkdownSummary(user, repositories) {
   if (!user) return "";

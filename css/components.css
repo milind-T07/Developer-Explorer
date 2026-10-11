@@ -233,6 +233,273 @@
   transform: none;
 }
 
+/* Global Repository Search Form */
+.repo-search-form {
+  position: relative;
+  width: 100%;
+  display: flex;
+  gap: 0.65rem;
+  margin-top: 0.5rem;
+}
+
+.repo-search-form__input-wrapper {
+  position: relative;
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+.repo-search-form__icon {
+  position: absolute;
+  left: 1rem;
+  width: 18px;
+  height: 18px;
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.repo-search-form__input {
+  width: 100%;
+  min-height: 48px;
+  padding: 0 3rem 0 2.85rem;
+  border-radius: var(--border-radius-md);
+  background: var(--bg-input);
+  color: var(--text-primary);
+  border: 1px solid var(--glass-border);
+  font-size: 0.94rem;
+  font-weight: 500;
+  transition: all var(--transition-fast);
+  box-shadow: var(--shadow-sm);
+}
+
+.repo-search-form__input:focus {
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 3px var(--accent-subtle);
+}
+
+.repo-search-form__clear-btn {
+  position: absolute;
+  right: 0.85rem;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--bg-pill);
+  color: var(--text-muted);
+  font-size: 1rem;
+  transition: all var(--transition-fast);
+  cursor: pointer;
+  border: none;
+}
+
+.repo-search-form__clear-btn:hover {
+  background: var(--border-strong);
+  color: var(--text-primary);
+}
+
+.repo-search-form__submit-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 48px;
+  padding: 0 1.5rem;
+  border-radius: var(--border-radius-md);
+  background: linear-gradient(135deg, var(--accent-gradient-start), var(--accent-gradient-end));
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 0.92rem;
+  transition: all var(--transition-fast);
+  box-shadow: 0 3px 14px var(--accent-glow);
+  white-space: nowrap;
+  border: none;
+  cursor: pointer;
+}
+
+.repo-search-form__submit-btn:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.08);
+}
+
+.repo-search-form__submit-btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Popular Search Suggestions */
+.repo-search-suggestions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin: 0.75rem 0 0.5rem 0;
+}
+
+.repo-search-suggestions__label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+}
+
+.suggestion-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.3rem 0.7rem;
+  border-radius: var(--border-radius-pill);
+  background: var(--bg-pill);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.suggestion-chip:hover {
+  background: var(--accent-subtle);
+  border-color: var(--accent-border);
+  color: var(--accent-primary);
+  transform: translateY(-1px);
+}
+
+.suggestion-chip.active {
+  background: var(--accent-subtle);
+  border-color: var(--accent-primary);
+  color: var(--accent-primary);
+  font-weight: 600;
+}
+
+/* Active Filter Badges */
+.active-filter-tags {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+}
+
+.active-filter-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.2rem 0.55rem;
+  border-radius: var(--border-radius-pill);
+  background: var(--accent-subtle);
+  border: 1px solid var(--accent-border);
+  color: var(--accent-primary);
+  font-size: 0.76rem;
+  font-weight: 600;
+}
+
+.active-filter-tag__remove {
+  background: transparent;
+  border: none;
+  color: var(--accent-primary);
+  font-size: 0.85rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+/* Owner metadata in Repo Card */
+.repo-card__owner {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 0.2rem;
+}
+
+.repo-card__owner-avatar {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.repo-card__owner-name {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+.repo-card__owner-name:hover {
+  color: var(--accent-primary);
+  text-decoration: underline;
+}
+
+/* Discovery Landing Card */
+.discovery-landing {
+  padding: 2.5rem 1.5rem;
+  text-align: center;
+  border-radius: var(--border-radius-lg);
+  background: var(--glass-bg);
+  border: 1px dashed var(--glass-border);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.25rem;
+  grid-column: 1 / -1;
+}
+
+.discovery-landing__icon {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--border-radius-md);
+  background: var(--accent-subtle);
+  color: var(--accent-primary);
+  display: grid;
+  place-items: center;
+}
+
+.discovery-landing__title {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.discovery-landing__desc {
+  max-width: 560px;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.55;
+  margin: 0 auto;
+}
+
+.discovery-landing__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.75rem;
+  width: 100%;
+  max-width: 720px;
+  margin-top: 0.5rem;
+  text-align: left;
+}
+
+.discovery-feature-card {
+  padding: 0.9rem 1rem;
+  border-radius: var(--border-radius-sm);
+  background: var(--bg-card-solid);
+  border: 1px solid var(--border-color);
+  font-size: 0.82rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+}
+
+.discovery-feature-card svg {
+  color: var(--accent-primary);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
 /* Preset Chips */
 .preset-devs {
   display: flex;

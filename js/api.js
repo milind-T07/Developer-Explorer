@@ -204,3 +204,60 @@ async function fetchDeveloperComparison(user1, user2) {
       : { user: null, repositories: [], error: res2.reason.message },
   };
 }
+
+// -------------------------------------------------------------
+// GLOBAL GITHUB REPOSITORY SEARCH API
+// -------------------------------------------------------------
+let globalRepoAbortController = null;
+
+async function searchGlobalRepositories(query, { language = "all", minStars = "all", sort = "best-match", page = 1, perPage = 30 } = {}) {
+  const trimmed = (query || "").trim();
+  if (!trimmed) {
+    throw new Error("Please enter keywords, topics, or technologies to search repositories.");
+  }
+
+  // Cancel prior in-flight search if still running
+  if (globalRepoAbortController) {
+    globalRepoAbortController.abort("New global search initiated");
+  }
+  globalRepoAbortController = new AbortController();
+  const signal = globalRepoAbortController.signal;
+
+  // Build GitHub query qualifiers safely
+  let fullQuery = trimmed;
+  if (language && language !== "all") {
+    fullQuery += ` language:${language}`;
+  }
+  if (minStars && minStars !== "all") {
+    fullQuery += ` stars:>=${minStars}`;
+  }
+
+  // Map sort parameter
+  let apiSort = "";
+  const order = "desc";
+  if (sort === "stars") {
+    apiSort = "stars";
+  } else if (sort === "forks") {
+    apiSort = "forks";
+  } else if (sort === "updated") {
+    apiSort = "updated";
+  }
+
+  const cacheKey = `global_search_${fullQuery.toLowerCase()}_${apiSort}_p${page}_${perPage}`;
+  const cached = getCachedData(cacheKey);
+  if (cached) return cached;
+
+  try {
+    const url = API_ENDPOINTS.searchRepositories(fullQuery, page, perPage, apiSort, order);
+    const response = await fetchWithTimeout(url, { signal }, APP_CONFIG.timeoutMs || 12000);
+    const data = await handleGitHubResponse(response);
+
+    if (data && Array.isArray(data.items)) {
+      setCachedData(cacheKey, data);
+      return data;
+    }
+    return { total_count: 0, items: [] };
+  } finally {
+    globalRepoAbortController = null;
+  }
+}

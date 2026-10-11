@@ -141,10 +141,6 @@
     justify-content: flex-start;
   }
 
-  .languages-summary-grid {
-    grid-template-columns: 1fr;
-  }
-
   .modal-stats-grid {
     grid-template-columns: 1fr;
   }

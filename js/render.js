@@ -242,18 +242,31 @@ function createRepositoryCard(repo) {
   const langColor = getLanguageColor(repoLanguage);
 
   const topicsHtml = repo.topics && repo.topics.length
-    ? repo.topics.slice(0, 5).map(t => `<button class="repo-card__topic" onclick="filterByTopic('${escapeHtml(t)}', event)">#${escapeHtml(t)}</button>`).join("")
+    ? repo.topics.slice(0, 5).map(t => `<button type="button" class="repo-card__topic" onclick="filterByTopicTag('${escapeHtml(t)}', event)">#${escapeHtml(t)}</button>`).join("")
     : "";
 
   const isStarred = (repo.stargazers_count || 0) > 100;
-  const cloneUrl = repo.clone_url || `https://github.com/${repo.full_name}.git`;
+  const cloneUrl = repo.clone_url || `https://github.com/${repo.full_name || repo.name}.git`;
+  const owner = repo.owner || {};
+  const ownerLogin = owner.login || "";
+  const ownerAvatar = owner.avatar_url || "";
+  const openIssues = repo.open_issues_count !== undefined && repo.open_issues_count !== null ? repo.open_issues_count : null;
 
   return `
     <article class="repo-card ${isStarred ? 'repo-card--featured' : ''}" data-repo-id="${repo.id}">
+      ${ownerLogin ? `
+        <div class="repo-card__owner">
+          ${ownerAvatar ? `<img src="${escapeHtml(ownerAvatar)}" alt="${escapeHtml(ownerLogin)}" class="repo-card__owner-avatar" loading="lazy" />` : ""}
+          <a href="https://github.com/${escapeHtml(ownerLogin)}" target="_blank" rel="noopener noreferrer" class="repo-card__owner-name" onclick="event.stopPropagation()">
+            @${escapeHtml(ownerLogin)}
+          </a>
+        </div>
+      ` : ""}
+
       <div class="repo-card__header">
         <div class="repo-card__title-group">
           <svg class="repo-card__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
-          <a href="${escapeHtml(repo.html_url)}" target="_blank" rel="noopener noreferrer" class="repo-card__title-link">
+          <a href="${escapeHtml(repo.html_url)}" target="_blank" rel="noopener noreferrer" class="repo-card__title-link" title="${escapeHtml(repo.name)}">
             ${escapeHtml(repo.name)}
           </a>
         </div>
@@ -268,11 +281,11 @@ function createRepositoryCard(repo) {
       ${topicsHtml ? `<div class="repo-card__topics">${topicsHtml}</div>` : ""}
 
       <div class="repo-card__actions-row">
-        <button class="repo-card__action-btn" onclick="copyCloneCommand('${escapeHtml(cloneUrl)}', event)" title="Copy git clone URL">
+        <button type="button" class="repo-card__action-btn" onclick="copyCloneCommand('${escapeHtml(cloneUrl)}', event)" title="Copy git clone URL">
           <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
           <span>Clone</span>
         </button>
-        <button class="repo-card__action-btn" onclick="openRepoModal(${repo.id})" title="View detailed repository analytics">
+        <button type="button" class="repo-card__action-btn" onclick="openRepoModal(${repo.id})" title="View detailed repository analytics">
           <span>Details</span>
           <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
         </button>
@@ -280,20 +293,26 @@ function createRepositoryCard(repo) {
 
       <div class="repo-card__meta">
         ${repoLanguage ? `
-          <div class="repo-card__meta-item">
+          <div class="repo-card__meta-item" title="Language: ${escapeHtml(repoLanguage)}">
             <span class="language-item__dot" style="background-color: ${langColor};"></span>
             <span>${escapeHtml(repoLanguage)}</span>
           </div>
         ` : ""}
-        <div class="repo-card__meta-item">
+        <div class="repo-card__meta-item" title="Stars">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
           <span>${formatNumber(repo.stargazers_count)}</span>
         </div>
-        <div class="repo-card__meta-item">
+        <div class="repo-card__meta-item" title="Forks">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="18" r="3"></circle><circle cx="6" cy="6" r="3"></circle><circle cx="18" cy="6" r="3"></circle><path d="M18 9v1a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V9"></path><path d="M12 12v3"></path></svg>
           <span>${formatNumber(repo.forks_count)}</span>
         </div>
-        <div class="repo-card__meta-item">
+        ${openIssues !== null ? `
+          <div class="repo-card__meta-item" title="Open Issues">
+            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+            <span>${formatNumber(openIssues)}</span>
+          </div>
+        ` : ""}
+        <div class="repo-card__meta-item" title="Last updated">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
           <span>${timeAgo(repo.updated_at)}</span>
         </div>
@@ -302,150 +321,283 @@ function createRepositoryCard(repo) {
   `;
 }
 
-function renderRepositories() {
-  const repositoriesGrid = document.getElementById("repositoriesGrid");
-  const repoCountText = document.getElementById("repoCountText");
-  const loadMoreContainer = document.getElementById("loadMoreContainer");
-  if (!repositoriesGrid) return;
-
-  const repositories = appState.filteredRepositories;
-
-  repositoriesGrid.className = `repositories-grid repositories-grid--${appState.viewMode}`;
-
-  if (!appState.currentUser) {
-    repositoriesGrid.innerHTML = `
-      <article class="empty-card">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
-        <h4>No developer profile loaded</h4>
-        <p>Go to Overview and search a GitHub username to explore repositories.</p>
-      </article>
-    `;
-    if (repoCountText) repoCountText.textContent = "Showing 0 repositories";
-    if (loadMoreContainer) loadMoreContainer.innerHTML = "";
-    updateSectionStatus("repo", "Repositories Explorer", "Load a developer profile in Overview to view and search repositories.", "info");
-    return;
-  }
-
-  if (appState.currentUser.public_repos === 0) {
-    repositoriesGrid.innerHTML = `
-      <article class="empty-card">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"></circle><line x1="8" y1="12" x2="16" y2="12"></line></svg>
-        <h4>Zero public repositories</h4>
-        <p>@${escapeHtml(appState.currentUser.login)} has not created any public repositories yet.</p>
-      </article>
-    `;
-    if (repoCountText) repoCountText.textContent = "0 public repositories";
-    if (loadMoreContainer) loadMoreContainer.innerHTML = "";
-    updateSectionStatus("repo", "No Repositories Available", `@${appState.currentUser.login} does not have any public repositories.`, "warning");
-    return;
-  }
-
-  if (!repositories || !repositories.length) {
-    repositoriesGrid.innerHTML = `
-      <article class="empty-card">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
-        <h4>No matching repositories found</h4>
-        <p>No repositories matched your query. Try clearing your search keyword or language filter.</p>
-        <button class="btn btn--secondary" onclick="resetRepoFilters()" style="margin-top:0.5rem;">Reset Filters</button>
-      </article>
-    `;
-    if (repoCountText) repoCountText.textContent = `0 of ${appState.repositories.length} repositories matching filter`;
-    if (loadMoreContainer) loadMoreContainer.innerHTML = "";
-    const filterDesc = appState.repoSearchQuery ? ` matching "${appState.repoSearchQuery}"` : "";
-    updateSectionStatus("repo", "No Repositories Match Filter", `No repositories found${filterDesc}. Try adjusting your search query or language filter.`, "warning");
-    return;
-  }
-
-  if (repoCountText) {
-    const totalLoaded = appState.repositories.length;
-    const totalPublic = appState.currentUser.public_repos;
-    repoCountText.textContent = `Showing ${repositories.length} of ${totalLoaded} loaded repositories (${totalPublic} total on GitHub)`;
-  }
-
-  // Dynamic Section Status Feedback Banner
-  if (appState.repoSearchQuery) {
-    updateSectionStatus(
-      "repo",
-      "Repositories Loaded Successfully",
-      `Found ${repositories.length} of ${appState.repositories.length} repositories matching "${appState.repoSearchQuery}".`,
-      "success"
-    );
-  } else if (appState.languageFilter && appState.languageFilter !== "all") {
-    updateSectionStatus(
-      "repo",
-      "Repositories Loaded Successfully",
-      `Displaying ${repositories.length} repositories written in ${appState.languageFilter}.`,
-      "success"
-    );
-  } else {
-    updateSectionStatus(
-      "repo",
-      "Repositories Loaded Successfully",
-      `Retrieved ${repositories.length} public repositories for @${appState.currentUser.login}.`,
-      "success"
-    );
-  }
-
-  repositoriesGrid.innerHTML = repositories.map(createRepositoryCard).join("");
-
-  // Load More Button
-  if (loadMoreContainer) {
-    if (appState.hasMoreRepos) {
-      loadMoreContainer.innerHTML = `
-        <button class="btn btn--secondary" id="loadMoreBtn" onclick="handleLoadMoreRepositories()">
-          ${appState.isLoadingMore ? '<span class="spin">⏳</span> Loading Next Page...' : `Load More Repositories (${appState.repositories.length}/${appState.currentUser.public_repos})`}
-        </button>
-      `;
-    } else {
-      loadMoreContainer.innerHTML = "";
-    }
-  }
-}
-
-function renderLanguageOptions(repositories) {
-  const select = document.getElementById("filterLanguage");
-  if (!select) return;
-
-  const currentVal = appState.languageFilter || "all";
-  const languages = Array.from(
-    new Set(repositories.map((r) => r.language).filter(Boolean))
-  ).sort();
-
-  select.innerHTML = `<option value="all">All Languages (${repositories.length})</option>` +
-    languages.map(lang => `<option value="${escapeHtml(lang)}" ${lang === currentVal ? "selected" : ""}>${escapeHtml(lang)}</option>`).join("");
-}
-
-function renderTopicFilters(repositories) {
-  const container = document.getElementById("topicFilterContainer");
+function renderPopularSuggestions() {
+  const container = document.getElementById("globalRepoSuggestionsContainer");
   if (!container) return;
 
-  const topicCounts = {};
-  repositories.forEach((r) => {
-    if (r.topics && Array.isArray(r.topics)) {
-      r.topics.forEach((t) => {
-        topicCounts[t] = (topicCounts[t] || 0) + 1;
-      });
-    }
-  });
+  const currentQuery = (appState.repoSearchQuery || "").toLowerCase();
+  container.innerHTML = `
+    <span class="repo-search-suggestions__label">Suggested:</span>
+    ${POPULAR_REPO_SUGGESTIONS.map((sug) => {
+      const isActive = currentQuery === sug.toLowerCase();
+      return `
+        <button type="button" class="suggestion-chip ${isActive ? 'active' : ''}" onclick="applySearchSuggestion('${escapeHtml(sug)}')">
+          <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          <span>${escapeHtml(sug)}</span>
+        </button>
+      `;
+    }).join("")}
+  `;
+}
 
-  const sortedTopics = Object.entries(topicCounts)
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 10);
+function renderActiveFilterTags() {
+  const container = document.getElementById("globalRepoActiveFilters");
+  if (!container) return;
 
-  if (!sortedTopics.length) {
+  const filters = [];
+  if (appState.repoSearchLanguage && appState.repoSearchLanguage !== "all") {
+    filters.push({ type: "language", label: `Language: ${appState.repoSearchLanguage}` });
+  }
+  if (appState.repoSearchMinStars && appState.repoSearchMinStars !== "all") {
+    filters.push({ type: "stars", label: `Stars: >${appState.repoSearchMinStars}` });
+  }
+  if (appState.repoSearchSort && appState.repoSearchSort !== "best-match") {
+    const sortLabels = { stars: "Most Stars", forks: "Most Forks", updated: "Recently Updated" };
+    filters.push({ type: "sort", label: `Sort: ${sortLabels[appState.repoSearchSort] || appState.repoSearchSort}` });
+  }
+
+  if (!filters.length) {
     container.innerHTML = "";
     return;
   }
 
-  container.innerHTML = `
-    <span class="topic-filter__label">Popular Topics:</span>
-    <button class="topic-chip ${appState.topicFilter === 'all' ? 'active' : ''}" onclick="filterByTopic('all')">All</button>
-    ${sortedTopics.map(([t, count]) => `
-      <button class="topic-chip ${appState.topicFilter === t.toLowerCase() ? 'active' : ''}" onclick="filterByTopic('${escapeHtml(t)}')">
-        #${escapeHtml(t)} <span class="topic-chip__count">${count}</span>
-      </button>
-    `).join("")}
+  container.innerHTML = filters.map(f => `
+    <span class="active-filter-tag">
+      <span>${escapeHtml(f.label)}</span>
+      <button type="button" class="active-filter-tag__remove" onclick="removeGlobalRepoFilter('${f.type}')" title="Remove filter" aria-label="Remove filter">&times;</button>
+    </span>
+  `).join("") + `
+    <button type="button" class="btn btn--secondary btn--sm" style="padding:0.15rem 0.5rem; font-size:0.75rem; min-height:22px;" onclick="resetGlobalRepoSearchFilters()">Clear All</button>
   `;
+}
+
+function applySearchSuggestion(sug) {
+  const searchInput = document.getElementById("globalRepoSearchInput");
+  if (searchInput) searchInput.value = sug;
+  setGlobalRepoQuery(sug);
+  if (typeof handleGlobalRepoSearch === "function") {
+    handleGlobalRepoSearch();
+  }
+}
+
+function filterByTopicTag(topic, event) {
+  if (event) event.stopPropagation();
+  const query = `topic:${topic}`;
+  const searchInput = document.getElementById("globalRepoSearchInput");
+  if (searchInput) searchInput.value = query;
+  setGlobalRepoQuery(query);
+  if (appState.activeView !== "repositories") {
+    if (typeof switchView === "function") switchView("repositories");
+  }
+  if (typeof handleGlobalRepoSearch === "function") {
+    handleGlobalRepoSearch();
+  }
+}
+
+function resetGlobalRepoSearchFilters() {
+  resetGlobalRepoFilters();
+  const langSelect = document.getElementById("globalRepoLanguage");
+  const minStarsSelect = document.getElementById("globalRepoMinStars");
+  const sortSelect = document.getElementById("globalRepoSort");
+  if (langSelect) langSelect.value = "all";
+  if (minStarsSelect) minStarsSelect.value = "all";
+  if (sortSelect) sortSelect.value = "best-match";
+  if (appState.repoSearchQuery) {
+    if (typeof handleGlobalRepoSearch === "function") handleGlobalRepoSearch();
+  } else {
+    renderGlobalRepositories();
+  }
+  showToast("Filters reset to default", "info");
+}
+
+function removeGlobalRepoFilter(type) {
+  if (type === "language") {
+    appState.repoSearchLanguage = "all";
+    const el = document.getElementById("globalRepoLanguage");
+    if (el) el.value = "all";
+  } else if (type === "stars") {
+    appState.repoSearchMinStars = "all";
+    const el = document.getElementById("globalRepoMinStars");
+    if (el) el.value = "all";
+  } else if (type === "sort") {
+    appState.repoSearchSort = "best-match";
+    const el = document.getElementById("globalRepoSort");
+    if (el) el.value = "best-match";
+  }
+  setGlobalRepoFilters({
+    language: appState.repoSearchLanguage,
+    minStars: appState.repoSearchMinStars,
+    sort: appState.repoSearchSort
+  });
+  if (appState.repoSearchQuery) {
+    if (typeof handleGlobalRepoSearch === "function") handleGlobalRepoSearch();
+  } else {
+    renderGlobalRepositories();
+  }
+}
+
+function renderGlobalRepositories() {
+  const grid = document.getElementById("globalRepositoriesGrid");
+  const countText = document.getElementById("globalRepoCountText");
+  const paginationNotice = document.getElementById("globalRepoPaginationNotice");
+  const loadMoreContainer = document.getElementById("globalRepoLoadMoreContainer");
+  const searchInput = document.getElementById("globalRepoSearchInput");
+  const clearBtn = document.getElementById("globalRepoClearBtn");
+  const langSelect = document.getElementById("globalRepoLanguage");
+  const minStarsSelect = document.getElementById("globalRepoMinStars");
+  const sortSelect = document.getElementById("globalRepoSort");
+  const gridBtn = document.getElementById("globalRepoGridBtn");
+  const listBtn = document.getElementById("globalRepoListBtn");
+
+  if (!grid) return;
+
+  // Sync inputs with state
+  if (searchInput && searchInput.value !== appState.repoSearchQuery) {
+    searchInput.value = appState.repoSearchQuery || "";
+  }
+  if (clearBtn) {
+    clearBtn.style.display = appState.repoSearchQuery ? "flex" : "none";
+  }
+  if (langSelect && langSelect.value !== appState.repoSearchLanguage) {
+    langSelect.value = appState.repoSearchLanguage || "all";
+  }
+  if (minStarsSelect && minStarsSelect.value !== appState.repoSearchMinStars) {
+    minStarsSelect.value = appState.repoSearchMinStars || "all";
+  }
+  if (sortSelect && sortSelect.value !== appState.repoSearchSort) {
+    sortSelect.value = appState.repoSearchSort || "best-match";
+  }
+
+  // Update layout buttons & grid class
+  const layout = appState.repoSearchLayout || "grid";
+  grid.className = `repositories-grid repositories-grid--${layout}`;
+  if (gridBtn) gridBtn.classList.toggle("active", layout === "grid");
+  if (listBtn) listBtn.classList.toggle("active", layout === "list");
+
+  // Render popular suggestions & active filter tags
+  renderPopularSuggestions();
+  renderActiveFilterTags();
+
+  // 1. Loading State
+  if (appState.repoSearchLoading) {
+    grid.innerHTML = Array(6).fill(0).map(() => `<div class="repo-card skeleton" style="height: 190px;"></div>`).join("");
+    if (countText) countText.textContent = `Searching GitHub for "${appState.repoSearchQuery}"...`;
+    if (paginationNotice) paginationNotice.textContent = "";
+    if (loadMoreContainer) loadMoreContainer.innerHTML = "";
+    updateSectionStatus("globalRepo", "Querying GitHub REST API", `Searching public repositories matching "${appState.repoSearchQuery}"...`, "loading");
+    return;
+  }
+
+  // 2. Error State
+  if (appState.repoSearchError) {
+    grid.innerHTML = `
+      <article class="empty-card" style="border-color: rgba(239, 68, 68, 0.3);">
+        <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" style="color:var(--color-rose-500);"><circle cx="12" cy="10" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+        <h4 style="color:var(--color-rose-400);">Search Request Failed</h4>
+        <p>${escapeHtml(appState.repoSearchError)}</p>
+        <button type="button" class="btn btn--secondary" onclick="retryGlobalRepoSearch()" style="margin-top:0.75rem;">Retry Search</button>
+      </article>
+    `;
+    if (countText) countText.textContent = "Search error";
+    if (paginationNotice) paginationNotice.textContent = "";
+    if (loadMoreContainer) loadMoreContainer.innerHTML = "";
+    updateSectionStatus("globalRepo", "Unable to Retrieve Repositories", appState.repoSearchError, "error");
+    return;
+  }
+
+  // 3. Discovery Landing State (No search performed yet)
+  if (!appState.repoSearchQuery && (!appState.repoSearchResults || !appState.repoSearchResults.length)) {
+    grid.innerHTML = `
+      <article class="discovery-landing">
+        <div class="discovery-landing__icon">
+          <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+          </svg>
+        </div>
+        <h3 class="discovery-landing__title font-heading">Discover GitHub Repositories</h3>
+        <p class="discovery-landing__desc">
+          Search millions of open-source projects across GitHub by keyword, topic, or technology. Filter by programming language, star count, and sort by community traction.
+        </p>
+        <div class="discovery-landing__grid">
+          <div class="discovery-feature-card">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            <div>
+              <strong>Live GitHub Search API</strong>
+              <div style="color:var(--text-muted); font-size:0.76rem;">Direct public discovery across all GitHub owners.</div>
+            </div>
+          </div>
+          <div class="discovery-feature-card">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            <div>
+              <strong>Qualifiers &amp; Filters</strong>
+              <div style="color:var(--text-muted); font-size:0.76rem;">Filter by language, minimum stars, and sorting.</div>
+            </div>
+          </div>
+          <div class="discovery-feature-card">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            <div>
+              <strong>Instant Inspection</strong>
+              <div style="color:var(--text-muted); font-size:0.76rem;">View metrics, copy clone URLs, and examine details.</div>
+            </div>
+          </div>
+        </div>
+      </article>
+    `;
+    if (countText) countText.textContent = "Search GitHub repositories to discover projects";
+    if (paginationNotice) paginationNotice.textContent = "";
+    if (loadMoreContainer) loadMoreContainer.innerHTML = "";
+    updateSectionStatus("globalRepo", "Global Repository Discovery Ready", "Enter keywords or choose a suggested topic to explore open-source repositories.", "info");
+    return;
+  }
+
+  // 4. No Results Matching Query
+  if (!appState.repoSearchResults || !appState.repoSearchResults.length) {
+    grid.innerHTML = `
+      <article class="empty-card">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <h4>No repositories match your search</h4>
+        <p>No repositories found matching "${escapeHtml(appState.repoSearchQuery)}". Try adjusting your search query or resetting filters.</p>
+        <button type="button" class="btn btn--secondary" onclick="resetGlobalRepoSearchFilters()" style="margin-top:0.75rem;">Reset Filters</button>
+      </article>
+    `;
+    if (countText) countText.textContent = `0 results for "${appState.repoSearchQuery}"`;
+    if (paginationNotice) paginationNotice.textContent = "";
+    if (loadMoreContainer) loadMoreContainer.innerHTML = "";
+    updateSectionStatus("globalRepo", "Zero Matching Repositories", `No public repositories found for query "${appState.repoSearchQuery}". Try broader search terms.`, "warning");
+    return;
+  }
+
+  // 5. Successful Search Results
+  const total = appState.repoSearchTotalCount;
+  const loaded = appState.repoSearchResults.length;
+  if (countText) {
+    countText.textContent = `Found ${formatNumber(total)} repositories for "${appState.repoSearchQuery}" (Showing ${loaded})`;
+  }
+  if (paginationNotice) {
+    paginationNotice.textContent = total > 1000 ? "• Note: GitHub API limits search to top 1,000 results" : "";
+  }
+
+  updateSectionStatus("globalRepo", "Repositories Discovered Successfully", `Found ${formatNumber(total)} repositories across GitHub for "${appState.repoSearchQuery}".`, "success");
+
+  grid.innerHTML = appState.repoSearchResults.map(createRepositoryCard).join("");
+
+  // Load More Button
+  if (loadMoreContainer) {
+    if (appState.repoSearchHasMore) {
+      loadMoreContainer.innerHTML = `
+        <button type="button" class="btn btn--secondary" id="globalRepoLoadMoreBtn" onclick="handleGlobalRepoLoadMore()">
+          ${appState.repoSearchLoadingMore ? '<span class="spin">⏳</span> Loading Next Page...' : `Load More Repositories (${loaded} of ${formatNumber(Math.min(total, 1000))})`}
+        </button>
+      `;
+    } else {
+      loadMoreContainer.innerHTML = loaded >= 10 ? `<p style="text-align:center; color:var(--text-muted); font-size:0.84rem;">All available results loaded (${loaded} repositories).</p>` : "";
+    }
+  }
+}
+
+// Backward-compatibility alias
+function renderRepositories() {
+  renderGlobalRepositories();
 }
 
 function renderLanguageBreakdown(languageBreakdown) {
@@ -485,81 +637,6 @@ function renderLanguageBreakdown(languageBreakdown) {
       </div>
     `)
     .join("");
-}
-
-function renderLanguagesView(repositories) {
-  const breakdown = calculateLanguageBreakdown(repositories);
-  const totalCountEl = document.getElementById("langTotalCount");
-  const topNameEl = document.getElementById("langTopName");
-  const topPercentEl = document.getElementById("langTopPercent");
-  const barEl = document.getElementById("langViewSegmentedBar");
-  const cardsGrid = document.getElementById("langViewCardsGrid");
-
-  if (!cardsGrid) return;
-
-  if (!breakdown || !breakdown.length) {
-    if (totalCountEl) totalCountEl.textContent = "0";
-    if (topNameEl) topNameEl.textContent = "None";
-    if (topPercentEl) topPercentEl.textContent = "0%";
-    if (barEl) barEl.innerHTML = "";
-    cardsGrid.innerHTML = `
-      <article class="empty-card">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
-        <h4>No language analytics available</h4>
-        <p>Search for a GitHub developer profile to view language intelligence.</p>
-      </article>
-    `;
-    updateSectionStatus("lang", "Programming Language Analytics", "Go to Overview and search for a developer profile to view language intelligence.", "info");
-    return;
-  }
-
-  if (totalCountEl) totalCountEl.textContent = String(breakdown.length);
-  if (topNameEl) topNameEl.textContent = breakdown[0].language;
-  if (topPercentEl) topPercentEl.textContent = `${breakdown[0].percentage}%`;
-
-  const userText = appState.currentUser ? ` for @${appState.currentUser.login}` : "";
-  updateSectionStatus("lang", "Languages Loaded Successfully", `Identified ${breakdown.length} unique languages across ${repositories.length} repositories${userText}.`, "success");
-
-  if (barEl) {
-    barEl.innerHTML = breakdown.map(item => `
-      <div class="segmented-bar__item" style="width: ${item.percentage}%; background-color: ${item.color};" title="${escapeHtml(item.language)}: ${item.percentage}%"></div>
-    `).join("");
-  }
-
-  cardsGrid.innerHTML = breakdown.map((item) => {
-    const reposInLang = repositories.filter(r => r.language === item.language).slice(0, 4);
-    const reposListHtml = reposInLang.map(r => `
-      <div class="lang-intel-card__repo-item">
-        <a href="${escapeHtml(r.html_url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(r.name)}</a>
-        <span>⭐ ${formatNumber(r.stargazers_count)}</span>
-      </div>
-    `).join("");
-
-    return `
-      <article class="lang-intel-card">
-        <div class="lang-intel-card__header">
-          <div class="lang-intel-card__title-group">
-            <span class="language-item__dot" style="background-color: ${item.color}; width:12px; height:12px;"></span>
-            <h4 class="lang-intel-card__title">${escapeHtml(item.language)}</h4>
-          </div>
-          <span style="font-weight:800; color:var(--text-primary);">${item.percentage}%</span>
-        </div>
-
-        <div style="font-size:0.84rem; color:var(--text-muted);">
-          Used across <strong>${item.count}</strong> ${item.count === 1 ? 'repository' : 'repositories'}.
-        </div>
-
-        <div class="lang-intel-card__repos-list">
-          <span style="font-size:0.75rem; text-transform:uppercase; font-weight:700; color:var(--text-muted);">Notable Repositories:</span>
-          ${reposListHtml}
-        </div>
-
-        <button class="btn btn--secondary btn--sm" style="margin-top:auto;" onclick="selectLanguageFilterAndSwitch('${escapeHtml(item.language)}')">
-          Filter Repositories by ${escapeHtml(item.language)}
-        </button>
-      </article>
-    `;
-  }).join("");
 }
 
 function renderCompareView(compareData) {
@@ -830,11 +907,7 @@ function renderDeveloperOverview(user, repositories) {
   renderUserProfile(user);
   renderUserStats(user, repositories);
   renderTopReposShowcase(repositories);
-  renderLanguageOptions(repositories);
-  renderTopicFilters(repositories);
-  renderRepositories();
   renderLanguageBreakdown(languageBreakdown);
-  renderLanguagesView(repositories);
   saveRecentSearch(user);
   renderRecentSearches();
   renderHistoryView();
@@ -842,21 +915,19 @@ function renderDeveloperOverview(user, repositories) {
 }
 
 function renderSkeletonState() {
-  const repositoriesGrid = document.getElementById("repositoriesGrid");
-  if (repositoriesGrid) {
-    repositoriesGrid.innerHTML = Array(6)
+  const showcase = document.getElementById("topReposShowcase");
+  if (showcase) {
+    showcase.innerHTML = Array(4)
       .fill(0)
-      .map(
-        () => `
-      <div class="repo-card skeleton" style="height: 180px;"></div>
-    `
-      )
+      .map(() => `<div class="top-repo-card skeleton" style="height: 120px;"></div>`)
       .join("");
   }
 }
 
 async function openRepoModal(repoId) {
-  const repo = appState.repositories.find((r) => r.id === repoId);
+  const repo = (appState.repoSearchResults && appState.repoSearchResults.find((r) => r.id === repoId)) ||
+               (appState.overviewRepositories && appState.overviewRepositories.find((r) => r.id === repoId)) ||
+               (appState.repositories && appState.repositories.find((r) => r.id === repoId));
   if (!repo) return;
 
   appState.activeRepoModal = repo;
@@ -990,31 +1061,23 @@ function copyCloneCommand(cloneUrl, event) {
 
 function filterByTopic(topic, event) {
   if (event) event.stopPropagation();
-  setRepoTopicFilter(topic);
-  renderRepositories();
-  renderTopicFilters(appState.repositories);
-  showToast(`Filtered by topic #${topic}`, "info");
+  filterByTopicTag(topic, event);
 }
 
 function resetRepoFilters() {
-  setRepoSearchQuery("");
-  setRepoLanguageFilter("all");
-  setRepoTopicFilter("all");
-  const searchInput = document.getElementById("repoSearchInput");
-  const langSelect = document.getElementById("filterLanguage");
-  if (searchInput) searchInput.value = "";
-  if (langSelect) langSelect.value = "all";
-  renderRepositories();
-  renderTopicFilters(appState.repositories);
-  showToast("Repository filters reset", "info");
+  resetGlobalRepoSearchFilters();
 }
 
 function selectLanguageFilterAndSwitch(lang) {
-  setRepoLanguageFilter(lang);
-  const langSelect = document.getElementById("filterLanguage");
-  if (langSelect) langSelect.value = lang;
-  window.location.hash = "#repositories";
-  renderRepositories();
+  setGlobalRepoFilters({ language: lang });
+  if (typeof switchView === "function") {
+    switchView("repositories");
+  }
+  if (appState.repoSearchQuery) {
+    if (typeof handleGlobalRepoSearch === "function") handleGlobalRepoSearch();
+  } else {
+    renderGlobalRepositories();
+  }
   showToast(`Filtered repositories by ${lang}`, "info");
 }
 

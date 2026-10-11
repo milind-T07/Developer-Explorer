@@ -3,11 +3,22 @@ const searchForm = document.getElementById("searchForm");
 const usernameInput = document.getElementById("usernameInput");
 const searchClearBtn = document.getElementById("searchClearBtn");
 const searchSubmitBtn = document.getElementById("searchSubmitBtn");
-const sortReposSelect = document.getElementById("sortRepos");
-const filterLanguageSelect = document.getElementById("filterLanguage");
-const repoSearchInput = document.getElementById("repoSearchInput");
-const viewGridBtn = document.getElementById("viewGridBtn");
-const viewListBtn = document.getElementById("viewListBtn");
+
+// Global Repository Explorer DOM References
+const globalRepoSearchForm = document.getElementById("globalRepoSearchForm");
+const globalRepoSearchInput = document.getElementById("globalRepoSearchInput");
+const globalRepoClearBtn = document.getElementById("globalRepoClearBtn");
+const globalRepoSearchBtn = document.getElementById("globalRepoSearchBtn");
+const globalRepoLanguage = document.getElementById("globalRepoLanguage");
+const globalRepoMinStars = document.getElementById("globalRepoMinStars");
+const globalRepoSort = document.getElementById("globalRepoSort");
+const globalRepoResetBtn = document.getElementById("globalRepoResetBtn");
+const globalRepoGridBtn = document.getElementById("globalRepoGridBtn");
+const globalRepoListBtn = document.getElementById("globalRepoListBtn");
+const viewGridBtn = globalRepoGridBtn;
+const viewListBtn = globalRepoListBtn;
+
+// Action Buttons
 const copyProfileBtn = document.getElementById("copyProfileBtn");
 const bookmarkProfileBtn = document.getElementById("bookmarkProfileBtn");
 const shareProfileBtn = document.getElementById("shareProfileBtn");
@@ -24,14 +35,14 @@ const menuToggle = document.getElementById("menuToggle");
 const menuClose = document.getElementById("menuClose");
 
 let lastSearchedUsername = "";
+let lastGlobalRepoSearchKey = "";
 
 // -------------------------------------------------------------
 // NAVIGATION & VIEW ROUTING
 // -------------------------------------------------------------
 const VIEW_TITLES = {
   overview: "Overview Dashboard",
-  repositories: "Repositories Explorer",
-  languages: "Programming Language Analytics",
+  repositories: "Repository Explorer",
   compare: "Compare Developers",
   saved: "Saved Profiles & History",
   settings: "Application Settings",
@@ -42,7 +53,8 @@ function switchView(viewName) {
   if (targetView.includes("?")) {
     targetView = targetView.split("?")[0];
   }
-  const validViews = ["overview", "repositories", "languages", "compare", "saved", "settings"];
+  const validViews = ["overview", "repositories", "compare", "saved", "settings"];
+  // Old hash '#languages' or unknown routes fallback gracefully to 'overview'
   const activeView = validViews.includes(targetView) ? targetView : "overview";
 
   setActiveView(activeView);
@@ -77,13 +89,7 @@ function switchView(viewName) {
 
   // Render view-specific content and status banners
   if (activeView === "repositories") {
-    renderRepositories();
-  } else if (activeView === "languages") {
-    if (appState.repositories && appState.repositories.length) {
-      renderLanguagesView(appState.repositories);
-    } else {
-      updateSectionStatus("lang", "Programming Language Analytics", "Load a developer profile in Overview to view language distribution.", "info");
-    }
+    renderGlobalRepositories();
   } else if (activeView === "saved") {
     renderBookmarksView();
     renderHistoryView();
@@ -205,37 +211,118 @@ function retryLastSearch() {
 }
 
 // -------------------------------------------------------------
-// REPOSITORY PAGINATION (LOAD MORE)
+// GLOBAL REPOSITORY SEARCH & PAGINATION
 // -------------------------------------------------------------
-async function handleLoadMoreRepositories() {
-  if (!appState.currentUser || appState.isLoadingMore || !appState.hasMoreRepos) return;
+async function handleGlobalRepoSearch(event) {
+  if (event) event.preventDefault();
 
-  appState.isLoadingMore = true;
-  renderRepositories();
+  const searchInput = document.getElementById("globalRepoSearchInput");
+  const rawQuery = searchInput ? searchInput.value : (appState.repoSearchQuery || "");
+  const query = rawQuery.trim();
+
+  if (!query) {
+    setGlobalRepoQuery("");
+    setGlobalRepoResults([], 0, false);
+    renderGlobalRepositories();
+    showToast("Please enter keywords or select a suggestion", "info");
+    return;
+  }
+
+  setGlobalRepoQuery(query);
+
+  const searchKey = `${query.toLowerCase()}::${appState.repoSearchLanguage}::${appState.repoSearchMinStars}::${appState.repoSearchSort}`;
+  if (appState.repoSearchLoading && searchKey === lastGlobalRepoSearchKey) {
+    return;
+  }
+  lastGlobalRepoSearchKey = searchKey;
 
   try {
-    const nextPage = (appState.repoPage || 1) + 1;
-    const moreRepos = await fetchMoreRepositories(appState.currentUser.login, nextPage);
+    setGlobalRepoLoading(true);
+    setGlobalRepoError(null);
+    updateGlobalRepoSearchButton(true);
+    renderGlobalRepositories();
 
-    if (moreRepos && moreRepos.length) {
-      appState.repoPage = nextPage;
-      setRepositories(moreRepos, true);
-      renderLanguageOptions(appState.repositories);
-      renderTopicFilters(appState.repositories);
-      renderRepositories();
-      renderLanguageBreakdown(calculateLanguageBreakdown(appState.repositories));
-      renderLanguagesView(appState.repositories);
-      showToast(`Fetched ${moreRepos.length} additional repositories`, "success");
+    const data = await searchGlobalRepositories(query, {
+      language: appState.repoSearchLanguage,
+      minStars: appState.repoSearchMinStars,
+      sort: appState.repoSearchSort,
+      page: 1,
+      perPage: 30
+    });
+
+    setGlobalRepoResults(data.items || [], data.total_count || 0, false);
+    showToast(`Found ${formatNumber(data.total_count || 0)} repositories for "${query}"`, "success");
+  } catch (err) {
+    setGlobalRepoError(err.message || "Failed to search GitHub repositories.");
+    showToast(err.message || "Search failed", "error");
+  } finally {
+    setGlobalRepoLoading(false);
+    updateGlobalRepoSearchButton(false);
+    renderGlobalRepositories();
+  }
+}
+
+async function handleGlobalRepoLoadMore() {
+  if (appState.repoSearchLoadingMore || !appState.repoSearchHasMore || !appState.repoSearchQuery) return;
+
+  const nextPage = (appState.repoSearchPage || 1) + 1;
+  try {
+    setGlobalRepoLoadingMore(true);
+    renderGlobalRepositories();
+
+    const data = await searchGlobalRepositories(appState.repoSearchQuery, {
+      language: appState.repoSearchLanguage,
+      minStars: appState.repoSearchMinStars,
+      sort: appState.repoSearchSort,
+      page: nextPage,
+      perPage: 30
+    });
+
+    if (data && data.items && data.items.length) {
+      appState.repoSearchPage = nextPage;
+      setGlobalRepoResults(data.items, data.total_count, true);
+      showToast(`Loaded ${data.items.length} additional repositories`, "success");
     } else {
-      appState.hasMoreRepos = false;
-      renderRepositories();
+      appState.repoSearchHasMore = false;
     }
   } catch (err) {
-    showToast(`Failed to load more repositories: ${err.message}`, "error");
+    showToast(`Failed to load more: ${err.message}`, "error");
   } finally {
-    appState.isLoadingMore = false;
-    renderRepositories();
+    setGlobalRepoLoadingMore(false);
+    renderGlobalRepositories();
   }
+}
+
+function updateGlobalRepoSearchButton(isLoading) {
+  const btn = document.getElementById("globalRepoSearchBtn");
+  const icon = document.getElementById("globalRepoSearchIcon");
+  const text = document.getElementById("globalRepoSearchBtnText");
+  if (!btn) return;
+
+  btn.disabled = isLoading;
+  if (isLoading) {
+    if (text) text.textContent = "Searching...";
+    if (icon) icon.classList.add("spin");
+  } else {
+    if (text) text.textContent = "Search";
+    if (icon) icon.classList.remove("spin");
+  }
+}
+
+function retryGlobalRepoSearch() {
+  handleGlobalRepoSearch();
+}
+
+function triggerGlobalRepoSearch(query) {
+  const searchInput = document.getElementById("globalRepoSearchInput");
+  if (searchInput) searchInput.value = query;
+  setGlobalRepoQuery(query);
+  handleGlobalRepoSearch();
+}
+
+// Backward compatibility alias
+function handleLoadMoreRepositories() {
+  handleGlobalRepoLoadMore();
 }
 
 // -------------------------------------------------------------
@@ -446,20 +533,42 @@ function handleCopySummary() {
 }
 
 function handleExportCsv() {
+  if (appState.activeView === "repositories") {
+    if (!appState.repoSearchResults || !appState.repoSearchResults.length) {
+      showToast("No repository search results to export", "info");
+      return;
+    }
+    exportGlobalRepositoriesAsCsv(appState.repoSearchQuery, appState.repoSearchResults);
+    showToast(`Exported ${appState.repoSearchResults.length} repositories to CSV`, "success");
+    return;
+  }
+
   if (!appState.currentUser) {
     showToast("No active profile loaded to export", "info");
     return;
   }
-  exportProfileAsCsv(appState.currentUser, appState.repositories);
-  showToast(`Exported ${appState.repositories.length} repositories to CSV`, "success");
+  const repos = appState.overviewRepositories && appState.overviewRepositories.length ? appState.overviewRepositories : appState.repositories;
+  exportProfileAsCsv(appState.currentUser, repos);
+  showToast(`Exported ${repos.length} repositories to CSV`, "success");
 }
 
 function handleExportJson() {
+  if (appState.activeView === "repositories") {
+    if (!appState.repoSearchResults || !appState.repoSearchResults.length) {
+      showToast("No repository search results to export", "info");
+      return;
+    }
+    exportGlobalRepositoriesAsJson(appState.repoSearchQuery, appState.repoSearchResults, appState.repoSearchTotalCount);
+    showToast(`Exported ${appState.repoSearchResults.length} repositories to JSON`, "success");
+    return;
+  }
+
   if (!appState.currentUser) {
     showToast("No active profile loaded to export", "info");
     return;
   }
-  exportProfileAsJson(appState.currentUser, appState.repositories);
+  const repos = appState.overviewRepositories && appState.overviewRepositories.length ? appState.overviewRepositories : appState.repositories;
+  exportProfileAsJson(appState.currentUser, repos);
   showToast("Exported complete profile analytics to JSON", "success");
 }
 
@@ -526,36 +635,92 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Live Repo Search Input
-  if (repoSearchInput) {
-    repoSearchInput.addEventListener("input", (e) => {
-      setRepoSearchQuery(e.target.value);
-      renderRepositories();
+  // Global Repository Search Form & Submit
+  if (globalRepoSearchForm) {
+    globalRepoSearchForm.addEventListener("submit", handleGlobalRepoSearch);
+  }
+
+  // Global Repository Search Input & Clear
+  if (globalRepoSearchInput) {
+    globalRepoSearchInput.addEventListener("input", (e) => {
+      if (globalRepoClearBtn) {
+        globalRepoClearBtn.style.display = e.target.value.trim() ? "flex" : "none";
+      }
+    });
+    globalRepoSearchInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        handleGlobalRepoSearch();
+      }
     });
   }
 
-  // Language Filter Dropdown
-  if (filterLanguageSelect) {
-    filterLanguageSelect.addEventListener("change", (e) => {
-      setRepoLanguageFilter(e.target.value);
-      renderRepositories();
+  if (globalRepoClearBtn) {
+    globalRepoClearBtn.addEventListener("click", () => {
+      if (globalRepoSearchInput) {
+        globalRepoSearchInput.value = "";
+        globalRepoSearchInput.focus();
+      }
+      globalRepoClearBtn.style.display = "none";
+      setGlobalRepoQuery("");
+      setGlobalRepoResults([], 0, false);
+      renderGlobalRepositories();
     });
   }
 
-  // Sort Repos Dropdown
-  if (sortReposSelect) {
-    sortReposSelect.addEventListener("change", (e) => {
-      setSortType(e.target.value);
-      renderRepositories();
+  // Global Repository Language Filter Dropdown
+  if (globalRepoLanguage) {
+    globalRepoLanguage.addEventListener("change", (e) => {
+      setGlobalRepoFilters({ language: e.target.value });
+      if (appState.repoSearchQuery) {
+        handleGlobalRepoSearch();
+      } else {
+        renderGlobalRepositories();
+      }
     });
   }
 
-  // Layout View Toggles
-  if (viewGridBtn) {
-    viewGridBtn.addEventListener("click", () => applyDefaultLayout("grid"));
+  // Global Repository Min Stars Filter Dropdown
+  if (globalRepoMinStars) {
+    globalRepoMinStars.addEventListener("change", (e) => {
+      setGlobalRepoFilters({ minStars: e.target.value });
+      if (appState.repoSearchQuery) {
+        handleGlobalRepoSearch();
+      } else {
+        renderGlobalRepositories();
+      }
+    });
   }
-  if (viewListBtn) {
-    viewListBtn.addEventListener("click", () => applyDefaultLayout("list"));
+
+  // Global Repository Sort Dropdown
+  if (globalRepoSort) {
+    globalRepoSort.addEventListener("change", (e) => {
+      setGlobalRepoFilters({ sort: e.target.value });
+      if (appState.repoSearchQuery) {
+        handleGlobalRepoSearch();
+      } else {
+        renderGlobalRepositories();
+      }
+    });
+  }
+
+  // Global Repository Reset Filters Button
+  if (globalRepoResetBtn) {
+    globalRepoResetBtn.addEventListener("click", resetGlobalRepoSearchFilters);
+  }
+
+  // Global Repository Layout View Toggles
+  if (globalRepoGridBtn) {
+    globalRepoGridBtn.addEventListener("click", () => {
+      setGlobalRepoLayout("grid");
+      renderGlobalRepositories();
+    });
+  }
+  if (globalRepoListBtn) {
+    globalRepoListBtn.addEventListener("click", () => {
+      setGlobalRepoLayout("list");
+      renderGlobalRepositories();
+    });
   }
 
   // Compare Form & Controls
