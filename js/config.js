@@ -60,7 +60,7 @@ const GITHUB_LANGUAGE_COLORS = {
   Erlang: "#B83998",
   "Emacs Lisp": "#c065db",
   OCaml: "#ef7a08",
-  Vim Script: "#199f4b",
+  "Vim Script": "#199f4b",
   Solidity: "#AA6746",
   PowerShell: "#012456"
 };
