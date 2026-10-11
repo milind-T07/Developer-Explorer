@@ -38,16 +38,22 @@ const VIEW_TITLES = {
 };
 
 function switchView(viewName) {
-  const targetView = viewName ? viewName.replace(/^#/, "") : "overview";
+  let targetView = viewName ? viewName.replace(/^#/, "") : "overview";
+  if (targetView.includes("?")) {
+    targetView = targetView.split("?")[0];
+  }
   const validViews = ["overview", "repositories", "languages", "compare", "saved", "settings"];
   const activeView = validViews.includes(targetView) ? targetView : "overview";
 
   setActiveView(activeView);
 
-  // Update URL Hash without reload
-  if (window.location.hash !== `#${activeView}`) {
-    history.pushState(null, "", `#${activeView}${window.location.search}`);
+  // Update URL Hash and query cleanly without duplicate parameter strings
+  const currentUrl = new URL(window.location.origin + window.location.pathname);
+  if (appState.currentUser && appState.currentUser.login) {
+    currentUrl.searchParams.set("user", appState.currentUser.login);
   }
+  currentUrl.hash = `#${activeView}`;
+  history.replaceState(null, "", currentUrl.toString());
 
   // Update View Sections Visibility
   document.querySelectorAll(".view-section").forEach((sec) => {
@@ -69,12 +75,26 @@ function switchView(viewName) {
     titleEl.textContent = VIEW_TITLES[activeView] || "Developer Explorer";
   }
 
-  // Render view-specific content if needed
-  if (activeView === "languages" && appState.repositories.length) {
-    renderLanguagesView(appState.repositories);
+  // Render view-specific content and status banners
+  if (activeView === "repositories") {
+    renderRepositories();
+  } else if (activeView === "languages") {
+    if (appState.repositories && appState.repositories.length) {
+      renderLanguagesView(appState.repositories);
+    } else {
+      updateSectionStatus("lang", "Programming Language Analytics", "Load a developer profile in Overview to view language distribution.", "info");
+    }
   } else if (activeView === "saved") {
     renderBookmarksView();
     renderHistoryView();
+  } else if (activeView === "settings") {
+    updateSectionStatus("settings", "Preferences Configured Successfully", "Application settings and visual preferences are loaded from browser storage.", "success");
+  } else if (activeView === "compare") {
+    if (appState.compareState && appState.compareState.dev1) {
+      renderCompareView(appState.compareState);
+    } else {
+      updateSectionStatus("compare", "Head-to-Head Analytics Ready", "Enter any two GitHub handles below or select a preset to generate a real-time comparison.", "info");
+    }
   }
 
   // Close mobile drawer on route change
@@ -131,9 +151,10 @@ async function handleDeveloperSearch(event) {
 
     renderDeveloperOverview(user, repositories);
 
-    // Update query string in URL
-    const url = new URL(window.location.href);
+    // Update query string in URL cleanly
+    const url = new URL(window.location.origin + window.location.pathname);
     url.searchParams.set("user", user.login);
+    url.hash = `#${appState.activeView || "overview"}`;
     history.replaceState(null, "", url.toString());
 
     updateStatus(
@@ -340,6 +361,9 @@ function applyThemeMode(mode) {
   const settings = getSavedSettings();
   settings.mode = mode;
   saveUserSettings(settings);
+  if (typeof updateSectionStatus === "function") {
+    updateSectionStatus("settings", "Preferences Configured Successfully", `Interface switched to ${mode} mode and saved.`, "success");
+  }
 }
 
 function applyAccentTone(accent) {
@@ -352,6 +376,9 @@ function applyAccentTone(accent) {
   const settings = getSavedSettings();
   settings.accent = accent;
   saveUserSettings(settings);
+  if (typeof updateSectionStatus === "function") {
+    updateSectionStatus("settings", "Preferences Configured Successfully", `Accent theme updated to ${accent} and saved.`, "success");
+  }
 }
 
 function applyReducedMotion(enabled) {
@@ -362,6 +389,9 @@ function applyReducedMotion(enabled) {
   const settings = getSavedSettings();
   settings.reducedMotion = enabled;
   saveUserSettings(settings);
+  if (typeof updateSectionStatus === "function") {
+    updateSectionStatus("settings", "Preferences Configured Successfully", `Reduced motion is ${enabled ? "enabled" : "disabled"} and saved.`, "success");
+  }
 }
 
 function applyDefaultLayout(layout) {
@@ -378,6 +408,9 @@ function applyDefaultLayout(layout) {
   const settings = getSavedSettings();
   settings.viewMode = layout;
   saveUserSettings(settings);
+  if (typeof updateSectionStatus === "function") {
+    updateSectionStatus("settings", "Preferences Configured Successfully", `Default repository view set to ${layout} layout.`, "success");
+  }
 }
 
 function toggleThemeMode() {

@@ -155,57 +155,57 @@
         </div>
       </header>
 
-      <!-- Compact Search Section (Accessible on all primary analytics views) -->
-      <section class="search-section" aria-label="Developer Search">
-        <form class="search-form" id="searchForm">
-          <div class="search-form__input-wrapper">
-            <svg class="search-form__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-            <input
-              type="text"
-              id="usernameInput"
-              class="search-form__input"
-              placeholder="Search GitHub username (e.g. torvalds, gaearon, yyx99)..."
-              autocomplete="off"
-              spellcheck="false"
-              aria-label="GitHub username search"
-            />
-            <button type="button" class="search-form__clear-btn" id="searchClearBtn" title="Clear input" aria-label="Clear input">&times;</button>
-            <span class="search-form__shortcut">⌘K</span>
-          </div>
-          <button class="search-form__button" id="searchSubmitBtn" type="submit" aria-label="Explore profile">
-            <span id="searchBtnText">Explore</span>
-            <svg id="searchBtnIcon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-          </button>
-        </form>
-
-        <!-- Featured Presets Chips -->
-        <div class="preset-devs" id="presetDevsContainer" aria-label="Featured Presets">
-          <span class="preset-devs__label">Presets:</span>
-          <!-- Dynamic presets populated from config -->
-        </div>
-
-        <!-- Recent Searches Chips -->
-        <div id="recentSearchesContainer"></div>
-      </section>
-
-      <!-- Status Banner -->
-      <section class="status-section" id="statusSection" aria-live="polite">
-        <div class="status-card status-card--info" id="statusCard">
-          <div class="status-card__left">
-            <div class="status-card__icon-wrapper" id="statusCardIcon">
-              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
-            </div>
-            <div>
-              <h3 class="status-card__title" id="statusTitle">Ready to Explore</h3>
-              <p class="status-card__message" id="statusMessage">Enter a GitHub username above or choose a preset.</p>
-            </div>
-          </div>
-          <div id="statusActions"></div>
-        </div>
-      </section>
-
-      <!-- VIEW 1: OVERVIEW -->
+      <!-- VIEW 1: OVERVIEW (Contains Explore Search Section and Profile Loaded Banner) -->
       <section class="view-section active" id="view-overview" aria-label="Overview View">
+
+        <!-- Explore Developer Search Section (Exclusive to Overview) -->
+        <section class="search-section" aria-label="Developer Search">
+          <form class="search-form" id="searchForm">
+            <div class="search-form__input-wrapper">
+              <svg class="search-form__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+              <input
+                type="text"
+                id="usernameInput"
+                class="search-form__input"
+                placeholder="Search GitHub username (e.g. torvalds, gaearon, yyx99)..."
+                autocomplete="off"
+                spellcheck="false"
+                aria-label="GitHub username search"
+              />
+              <button type="button" class="search-form__clear-btn" id="searchClearBtn" title="Clear input" aria-label="Clear input">&times;</button>
+              <span class="search-form__shortcut">⌘K</span>
+            </div>
+            <button class="search-form__button" id="searchSubmitBtn" type="submit" aria-label="Explore profile">
+              <span id="searchBtnText">Explore</span>
+              <svg id="searchBtnIcon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+            </button>
+          </form>
+
+          <!-- Featured Presets Chips -->
+          <div class="preset-devs" id="presetDevsContainer" aria-label="Featured Presets">
+            <span class="preset-devs__label">Presets:</span>
+          </div>
+
+          <!-- Recent Searches Chips -->
+          <div id="recentSearchesContainer"></div>
+        </section>
+
+        <!-- Profile Loaded Status Banner (Exclusive to Overview) -->
+        <section class="status-section" id="statusSection" aria-live="polite">
+          <div class="status-card status-card--info" id="statusCard">
+            <div class="status-card__left">
+              <div class="status-card__icon-wrapper" id="statusCardIcon">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+              </div>
+              <div>
+                <h3 class="status-card__title" id="statusTitle">Ready to Explore</h3>
+                <p class="status-card__message" id="statusMessage">Enter a GitHub username above or choose a preset.</p>
+              </div>
+            </div>
+            <div id="statusActions"></div>
+          </div>
+        </section>
+
         <!-- 5 Key Metrics Grid -->
         <div class="stats-grid" aria-label="Developer Statistics">
           <article class="stat-card">
@@ -339,6 +339,21 @@
             </div>
           </div>
 
+          <!-- Section-Specific Status Feedback Banner -->
+          <div class="section-status-banner" id="repoStatusBanner">
+            <div class="status-card status-card--success" id="repoStatusCard" style="display:none;">
+              <div class="status-card__left">
+                <div class="status-card__icon-wrapper" id="repoStatusIcon">
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                </div>
+                <div>
+                  <h4 class="status-card__title" id="repoStatusTitle" style="font-size:0.92rem;">Repositories Loaded</h4>
+                  <p class="status-card__message" id="repoStatusMessage" style="font-size:0.84rem;">Repositories loaded successfully.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <!-- Filter Toolbar -->
           <div class="repo-filter-bar">
             <div class="repo-filter-bar__left">
@@ -387,7 +402,7 @@
             <article class="empty-card">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
               <h4>No developer profile loaded</h4>
-              <p>Search a GitHub username above to explore repositories.</p>
+              <p>Go to Overview and search a GitHub username to explore repositories.</p>
             </article>
           </div>
 
@@ -403,6 +418,21 @@
             <div>
               <p class="section-header__eyebrow">Deep Intelligence</p>
               <h3 class="section-header__title font-heading">Programming Language Analytics</h3>
+            </div>
+          </div>
+
+          <!-- Section-Specific Status Feedback Banner -->
+          <div class="section-status-banner" id="langStatusBanner">
+            <div class="status-card status-card--success" id="langStatusCard" style="display:none;">
+              <div class="status-card__left">
+                <div class="status-card__icon-wrapper" id="langStatusIcon">
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                </div>
+                <div>
+                  <h4 class="status-card__title" id="langStatusTitle" style="font-size:0.92rem;">Language Analytics Active</h4>
+                  <p class="status-card__message" id="langStatusMessage" style="font-size:0.84rem;">Language statistics calculated from retrieved public repositories.</p>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -435,7 +465,7 @@
             <article class="empty-card">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
               <h4>No language data available</h4>
-              <p>Load a developer profile with public repositories to analyze their languages.</p>
+              <p>Go to Overview and search a developer to analyze their languages.</p>
             </article>
           </div>
         </div>
@@ -451,6 +481,21 @@
             </div>
           </div>
 
+          <!-- Section-Specific Status Feedback Banner -->
+          <div class="section-status-banner" id="compareStatusBanner">
+            <div class="status-card status-card--info" id="compareStatusCard">
+              <div class="status-card__left">
+                <div class="status-card__icon-wrapper" id="compareStatusIcon">
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 3h5v5"></path><path d="M4 20L21 3"></path><path d="M21 16v5h-5"></path><path d="M15 15l6 6"></path><path d="M4 4l5 5"></path></svg>
+                </div>
+                <div>
+                  <h4 class="status-card__title" id="compareStatusTitle" style="font-size:0.92rem;">Side-by-Side Intelligence</h4>
+                  <p class="status-card__message" id="compareStatusMessage" style="font-size:0.84rem;">Enter any two GitHub handles below or select a preset to generate a real-time comparison.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <!-- Comparison Form Inputs -->
           <form id="compareForm" class="compare-inputs-grid">
             <input type="text" id="compareUser1Input" class="repo-search-input" placeholder="First handle (e.g. torvalds)" autocomplete="off" />
@@ -462,7 +507,6 @@
           <!-- Preset Comparison Chips -->
           <div class="preset-devs" id="comparePresetsContainer" style="margin-bottom:1rem;">
             <span class="preset-devs__label">Quick Compare:</span>
-            <!-- Populated from config -->
           </div>
 
           <!-- Side-by-Side Comparison Matrix -->
@@ -470,7 +514,7 @@
             <article class="empty-card">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M16 3h5v5"></path><path d="M4 20L21 3"></path><path d="M21 16v5h-5"></path><path d="M15 15l6 6"></path><path d="M4 4l5 5"></path></svg>
               <h4>Enter two usernames to compare</h4>
-              <p>Compare followers, stars, repository volume, account age, and programming languages side-by-side.</p>
+              <p>Compare followers, stars, repository volume, account age, and top languages side-by-side.</p>
             </article>
           </div>
         </div>
@@ -483,6 +527,21 @@
             <div>
               <p class="section-header__eyebrow">Bookmarks & History</p>
               <h3 class="section-header__title font-heading">Saved Profiles</h3>
+            </div>
+          </div>
+
+          <!-- Section-Specific Status Feedback Banner -->
+          <div class="section-status-banner" id="savedStatusBanner">
+            <div class="status-card status-card--info" id="savedStatusCard">
+              <div class="status-card__left">
+                <div class="status-card__icon-wrapper" id="savedStatusIcon">
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+                </div>
+                <div>
+                  <h4 class="status-card__title" id="savedStatusTitle" style="font-size:0.92rem;">Bookmarked Profiles & History</h4>
+                  <p class="status-card__message" id="savedStatusMessage" style="font-size:0.84rem;">Bookmark profiles from the Overview to quickly revisit them here.</p>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -514,6 +573,21 @@
             <div>
               <p class="section-header__eyebrow">Preferences & Personalization</p>
               <h3 class="section-header__title font-heading">Application Settings</h3>
+            </div>
+          </div>
+
+          <!-- Section-Specific Status Feedback Banner -->
+          <div class="section-status-banner" id="settingsStatusBanner">
+            <div class="status-card status-card--info" id="settingsStatusCard">
+              <div class="status-card__left">
+                <div class="status-card__icon-wrapper" id="settingsStatusIcon">
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                </div>
+                <div>
+                  <h4 class="status-card__title" id="settingsStatusTitle" style="font-size:0.92rem;">Preferences Configured</h4>
+                  <p class="status-card__message" id="settingsStatusMessage" style="font-size:0.84rem;">Settings are saved in your local browser storage automatically.</p>
+                </div>
+              </div>
             </div>
           </div>
 

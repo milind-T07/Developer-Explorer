@@ -163,7 +163,8 @@
 }
 
 /* Status Banner Section */
-.status-section {
+.status-section,
+.section-status-banner {
   margin-bottom: 1.5rem;
 }
 

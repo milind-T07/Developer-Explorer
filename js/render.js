@@ -64,6 +64,32 @@ function updateStatus(title, message, type = "info", retryAction = null) {
   }
 }
 
+function updateSectionStatus(sectionPrefix, title, message, type = "info") {
+  const card = document.getElementById(`${sectionPrefix}StatusCard`);
+  const icon = document.getElementById(`${sectionPrefix}StatusIcon`);
+  const titleEl = document.getElementById(`${sectionPrefix}StatusTitle`);
+  const msgEl = document.getElementById(`${sectionPrefix}StatusMessage`);
+
+  if (!card) return;
+  card.style.display = "flex";
+  card.className = `status-card status-card--${type}`;
+  if (titleEl) titleEl.textContent = title;
+  if (msgEl) msgEl.textContent = message;
+
+  let iconSvg = `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>`;
+  if (type === "success") {
+    iconSvg = `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>`;
+  } else if (type === "warning") {
+    iconSvg = `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>`;
+  } else if (type === "error") {
+    iconSvg = `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>`;
+  } else if (type === "loading") {
+    iconSvg = `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" class="spin"><line x1="12" y1="2" x2="12" y2="6"></line><line x1="12" y1="18" x2="12" y2="22"></line><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"></line><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"></line><line x1="2" y1="12" x2="6" y2="12"></line><line x1="18" y1="12" x2="22" y2="12"></line><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"></line><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"></line></svg>`;
+  }
+
+  if (icon) icon.innerHTML = iconSvg;
+}
+
 function updateBookmarkButtonState(isSaved) {
   const btn = document.getElementById("bookmarkProfileBtn");
   const text = document.getElementById("bookmarkBtnText");
@@ -291,11 +317,12 @@ function renderRepositories() {
       <article class="empty-card">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
         <h4>No developer profile loaded</h4>
-        <p>Enter a username above or choose a preset to begin.</p>
+        <p>Go to Overview and search a GitHub username to explore repositories.</p>
       </article>
     `;
     if (repoCountText) repoCountText.textContent = "Showing 0 repositories";
     if (loadMoreContainer) loadMoreContainer.innerHTML = "";
+    updateSectionStatus("repo", "Repositories Explorer", "Load a developer profile in Overview to view and search repositories.", "info");
     return;
   }
 
@@ -309,6 +336,7 @@ function renderRepositories() {
     `;
     if (repoCountText) repoCountText.textContent = "0 public repositories";
     if (loadMoreContainer) loadMoreContainer.innerHTML = "";
+    updateSectionStatus("repo", "No Repositories Available", `@${appState.currentUser.login} does not have any public repositories.`, "warning");
     return;
   }
 
@@ -323,6 +351,8 @@ function renderRepositories() {
     `;
     if (repoCountText) repoCountText.textContent = `0 of ${appState.repositories.length} repositories matching filter`;
     if (loadMoreContainer) loadMoreContainer.innerHTML = "";
+    const filterDesc = appState.repoSearchQuery ? ` matching "${appState.repoSearchQuery}"` : "";
+    updateSectionStatus("repo", "No Repositories Match Filter", `No repositories found${filterDesc}. Try adjusting your search query or language filter.`, "warning");
     return;
   }
 
@@ -330,6 +360,30 @@ function renderRepositories() {
     const totalLoaded = appState.repositories.length;
     const totalPublic = appState.currentUser.public_repos;
     repoCountText.textContent = `Showing ${repositories.length} of ${totalLoaded} loaded repositories (${totalPublic} total on GitHub)`;
+  }
+
+  // Dynamic Section Status Feedback Banner
+  if (appState.repoSearchQuery) {
+    updateSectionStatus(
+      "repo",
+      "Repositories Loaded Successfully",
+      `Found ${repositories.length} of ${appState.repositories.length} repositories matching "${appState.repoSearchQuery}".`,
+      "success"
+    );
+  } else if (appState.languageFilter && appState.languageFilter !== "all") {
+    updateSectionStatus(
+      "repo",
+      "Repositories Loaded Successfully",
+      `Displaying ${repositories.length} repositories written in ${appState.languageFilter}.`,
+      "success"
+    );
+  } else {
+    updateSectionStatus(
+      "repo",
+      "Repositories Loaded Successfully",
+      `Retrieved ${repositories.length} public repositories for @${appState.currentUser.login}.`,
+      "success"
+    );
   }
 
   repositoriesGrid.innerHTML = repositories.map(createRepositoryCard).join("");
@@ -455,12 +509,16 @@ function renderLanguagesView(repositories) {
         <p>Search for a GitHub developer profile to view language intelligence.</p>
       </article>
     `;
+    updateSectionStatus("lang", "Programming Language Analytics", "Go to Overview and search for a developer profile to view language intelligence.", "info");
     return;
   }
 
   if (totalCountEl) totalCountEl.textContent = String(breakdown.length);
   if (topNameEl) topNameEl.textContent = breakdown[0].language;
   if (topPercentEl) topPercentEl.textContent = `${breakdown[0].percentage}%`;
+
+  const userText = appState.currentUser ? ` for @${appState.currentUser.login}` : "";
+  updateSectionStatus("lang", "Languages Loaded Successfully", `Identified ${breakdown.length} unique languages across ${repositories.length} repositories${userText}.`, "success");
 
   if (barEl) {
     barEl.innerHTML = breakdown.map(item => `
@@ -516,6 +574,7 @@ function renderCompareView(compareData) {
         <p>Compare followers, stars, repository volume, account age, and top languages side-by-side.</p>
       </article>
     `;
+    updateSectionStatus("compare", "Head-to-Head Analytics Ready", "Enter any two GitHub handles above or select a preset to generate a real-time comparison.", "info");
     return;
   }
 
@@ -629,6 +688,12 @@ function renderCompareView(compareData) {
       ${renderSide(dev2, dev1)}
     </div>
   `;
+
+  if (dev1.error || dev2.error) {
+    updateSectionStatus("compare", "Comparison Notice", "One or both profiles could not be loaded completely.", "warning");
+  } else {
+    updateSectionStatus("compare", "Comparison Loaded Successfully", `Head-to-head comparison loaded for @${dev1.user.login} vs @${dev2.user.login}.`, "success");
+  }
 }
 
 function renderBookmarksView() {
@@ -647,8 +712,11 @@ function renderBookmarksView() {
         <p>Save any developer profile using the Save button in the header or profile card to easily revisit them later.</p>
       </article>
     `;
+    updateSectionStatus("saved", "Saved Profiles & History", "No profiles bookmarked yet. Save profiles from the Overview dashboard.", "info");
     return;
   }
+
+  updateSectionStatus("saved", "Saved Profiles Loaded Successfully", `Loaded ${bookmarks.length} bookmarked developer ${bookmarks.length === 1 ? 'profile' : 'profiles'}.`, "success");
 
   grid.innerHTML = bookmarks.map((b) => `
     <article class="saved-card">
