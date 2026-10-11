@@ -154,7 +154,12 @@ body[data-theme="rose"] {
 }
 
 /* Reduced Motion Override */
-body.reduced-motion *,
+body.reduced-motion * {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+}
+
 @media (prefers-reduced-motion: reduce) {
   * {
     animation-duration: 0.001ms !important;
