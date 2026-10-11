@@ -1082,6 +1082,11 @@ function selectLanguageFilterAndSwitch(lang) {
 }
 
 function clearDeveloperData() {
+  if (typeof setCurrentUser === "function") setCurrentUser(null);
+  if (typeof setRepositories === "function") setRepositories([]);
+  if (typeof setLanguages === "function") setLanguages([]);
+  appState.overviewUsername = "";
+
   updateTextContent("publicRepos", "0");
   updateTextContent("followers", "0");
   updateTextContent("following", "0");
@@ -1123,4 +1128,153 @@ function clearDeveloperData() {
   if (segmentedBar) segmentedBar.innerHTML = "";
 
   updateBookmarkButtonState(false);
+}
+
+// -------------------------------------------------------------
+// SHARE DEVELOPER PROFILE MODAL
+// -------------------------------------------------------------
+function closeShareModal() {
+  const modal = document.getElementById("shareProfileModal");
+  if (modal) modal.classList.remove("open");
+}
+
+function copyShareText(text, label, buttonEl) {
+  copyToClipboard(text).then(() => {
+    showToast(`${label} copied to clipboard!`, "success");
+    if (buttonEl) {
+      const origSpan = buttonEl.querySelector("span");
+      if (origSpan) {
+        const origText = origSpan.textContent;
+        origSpan.textContent = "Copied!";
+        setTimeout(() => {
+          origSpan.textContent = origText;
+        }, 2000);
+      }
+    }
+  }).catch(() => {
+    showToast(`Failed to copy ${label}`, "error");
+  });
+}
+
+async function triggerNativeDeviceShare() {
+  if (!appState.currentUser) return;
+  const user = appState.currentUser;
+  const actualGithubUrl = user.html_url || `https://github.com/${user.login}`;
+  if (navigator.share) {
+    try {
+      await navigator.share({
+        title: `${user.name || user.login} on GitHub`,
+        text: `Check out ${user.name || user.login}'s GitHub developer profile (${user.public_repos || 0} repos, ${user.followers || 0} followers):`,
+        url: actualGithubUrl
+      });
+      showToast("Profile shared successfully!", "success");
+    } catch (err) {
+      if (err.name !== "AbortError") {
+        showToast("Device share failed, please use copy link", "info");
+      }
+    }
+  } else {
+    copyShareText(actualGithubUrl, "Actual GitHub profile link");
+  }
+}
+
+function openShareModal(user) {
+  if (!user) return;
+  const modal = document.getElementById("shareProfileModal");
+  const modalContent = document.getElementById("shareModalBody");
+  if (!modal || !modalContent) return;
+
+  const actualGithubUrl = user.html_url || `https://github.com/${user.login}`;
+  const dashboardUrl = `${window.location.origin}${window.location.pathname}?user=${encodeURIComponent(user.login)}${window.location.hash || "#overview"}`;
+  const shareMessage = `Check out ${user.name || user.login}'s GitHub profile: ${actualGithubUrl}`;
+  const tweetText = `Check out ${user.name || user.login} (@${user.login}) on GitHub: ${actualGithubUrl}`;
+  const emailSubject = `GitHub Developer Profile: ${user.name || user.login}`;
+  const emailBody = `Hi,\n\nCheck out ${user.name || user.login}'s (@${user.login}) GitHub developer profile:\nGitHub: ${actualGithubUrl}\nAnalytics: ${dashboardUrl}\n\nOverview:\n- Public Repos: ${user.public_repos || 0}\n- Followers: ${user.followers || 0}\n- Bio: ${user.bio || "N/A"}`;
+
+  modalContent.innerHTML = `
+    <div class="modal-header">
+      <div style="display:flex; align-items:center; gap:0.6rem;">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+        <div>
+          <h2 class="modal-title font-heading" id="modalShareTitle">Share Developer Profile</h2>
+          <p class="modal-subtitle">Share actual GitHub profile of @${escapeHtml(user.login)}</p>
+        </div>
+      </div>
+      <button class="modal-close-btn" onclick="closeShareModal()" aria-label="Close modal">&times;</button>
+    </div>
+
+    <div class="share-modal-body">
+      <div class="share-profile-card">
+        <img src="${escapeHtml(user.avatar_url)}" alt="${escapeHtml(user.login)}" class="share-profile-card__avatar" />
+        <div class="share-profile-card__info">
+          <h4 class="share-profile-card__name font-heading">${escapeHtml(user.name || user.login)}</h4>
+          <span class="share-profile-card__handle">@${escapeHtml(user.login)}</span>
+          <p class="share-profile-card__meta">${user.public_repos || 0} Repositories • ${user.followers || 0} Followers</p>
+        </div>
+      </div>
+
+      <div class="share-group">
+        <label class="share-group__label">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor"><path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
+          Actual GitHub Profile URL
+        </label>
+        <div class="share-input-row">
+          <input type="text" class="share-input" readonly value="${escapeHtml(actualGithubUrl)}" id="shareGithubInput" />
+          <button type="button" class="btn btn--primary btn--sm" id="copyActualGithubBtn" onclick="copyShareText('${escapeHtml(actualGithubUrl)}', 'Actual GitHub profile link', this)">
+            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+            <span>Copy</span>
+          </button>
+          <a href="${escapeHtml(actualGithubUrl)}" target="_blank" rel="noopener noreferrer" class="btn btn--secondary btn--sm" title="Open actual GitHub profile">
+            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+            <span>Open</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="share-group">
+        <label class="share-group__label">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+          DevExplorer Analytics Link
+        </label>
+        <div class="share-input-row">
+          <input type="text" class="share-input" readonly value="${escapeHtml(dashboardUrl)}" id="shareDashboardInput" />
+          <button type="button" class="btn btn--secondary btn--sm" id="copyDashboardBtn" onclick="copyShareText('${escapeHtml(dashboardUrl)}', 'Analytics link', this)">
+            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+            <span>Copy</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="share-channels">
+        <div class="share-channels__title">Send Profile Directly:</div>
+        <div class="share-channels__grid">
+          <a href="https://api.whatsapp.com/send?text=${encodeURIComponent(shareMessage)}" target="_blank" rel="noopener noreferrer" class="share-channel-btn share-channel-btn--whatsapp">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2zm.01 1.67c2.2 0 4.26.86 5.82 2.42a8.19 8.19 0 0 1 2.41 5.83c0 4.54-3.7 8.24-8.24 8.24-1.42 0-2.82-.37-4.06-1.08l-.29-.17-3.12.82.83-3.04-.19-.3a8.21 8.21 0 0 1-1.26-4.46c0-4.54 3.7-8.24 8.24-8.24zm4.52 11.64c-.25-.13-1.47-.72-1.7-.81-.23-.08-.39-.13-.56.13-.17.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.13-1.06-.39-2.02-1.25-.75-.67-1.25-1.49-1.4-1.74-.14-.25-.02-.39.11-.51.11-.11.25-.29.38-.44.13-.15.17-.25.25-.42.08-.17.04-.32-.02-.44-.06-.13-.56-1.35-.77-1.85-.2-.49-.41-.42-.56-.43h-.48c-.17 0-.44.06-.67.32-.23.25-.87.85-.87 2.08 0 1.23.89 2.42 1.02 2.59.13.17 1.76 2.68 4.26 3.76.6.26 1.06.41 1.42.53.6.19 1.15.16 1.58.1.48-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.15-1.18-.06-.1-.23-.17-.48-.29z"/></svg>
+            <span>WhatsApp</span>
+          </a>
+          <a href="https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}" target="_blank" rel="noopener noreferrer" class="share-channel-btn share-channel-btn--twitter">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            <span>X (Twitter)</span>
+          </a>
+          <a href="https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(actualGithubUrl)}" target="_blank" rel="noopener noreferrer" class="share-channel-btn share-channel-btn--linkedin">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg>
+            <span>LinkedIn</span>
+          </a>
+          <a href="mailto:?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}" class="share-channel-btn share-channel-btn--email">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+            <span>Email</span>
+          </a>
+        </div>
+
+        ${navigator.share ? `
+          <button type="button" class="btn btn--secondary btn--block" id="nativeShareTriggerBtn" style="margin-top:0.75rem;" onclick="triggerNativeDeviceShare()">
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+            <span>Open System / Device Share</span>
+          </button>
+        ` : ""}
+      </div>
+    </div>
+  `;
+
+  modal.classList.add("open");
 }

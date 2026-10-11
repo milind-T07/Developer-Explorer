@@ -165,4 +165,8 @@
   .saved-card__actions {
     flex-direction: column;
   }
+
+  .share-channels__grid {
+    grid-template-columns: 1fr;
+  }
 }

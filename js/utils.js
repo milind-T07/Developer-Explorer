@@ -264,14 +264,18 @@ function removeBookmark(login) {
 function getSavedSettings() {
   const defaults = {
     mode: "dark", // 'dark' | 'light' | 'system'
-    accent: "indigo", // 'indigo' | 'cyan' | 'emerald' | 'amber' | 'violet' | 'rose'
+    accent: "cyan", // 'indigo' | 'cyan' | 'emerald' | 'amber' | 'violet' | 'rose'
     viewMode: "grid", // 'grid' | 'list'
     reducedMotion: false
   };
   try {
     const raw = localStorage.getItem(SETTINGS_KEY);
     if (!raw) return defaults;
-    return { ...defaults, ...JSON.parse(raw) };
+    const parsed = JSON.parse(raw);
+    if (parsed && parsed.accent === "indigo") {
+      parsed.accent = "cyan";
+    }
+    return { ...defaults, ...parsed };
   } catch (e) {
     return defaults;
   }

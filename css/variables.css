@@ -1,12 +1,12 @@
 :root {
-  /* Default Core Accent Palette (Refined Indigo) */
-  --accent-primary: #6366f1;
-  --accent-primary-hover: #4f46e5;
-  --accent-gradient-start: #6366f1;
-  --accent-gradient-end: #8b5cf6;
-  --accent-glow: rgba(99, 102, 241, 0.28);
-  --accent-subtle: rgba(99, 102, 241, 0.12);
-  --accent-border: rgba(99, 102, 241, 0.26);
+  /* Default Core Accent Palette (Cyan) */
+  --accent-primary: #06b6d4;
+  --accent-primary-hover: #0891b2;
+  --accent-gradient-start: #06b6d4;
+  --accent-gradient-end: #3b82f6;
+  --accent-glow: rgba(6, 182, 212, 0.3);
+  --accent-subtle: rgba(6, 182, 212, 0.12);
+  --accent-border: rgba(6, 182, 212, 0.28);
 
   /* Deep Technical Dark Palette (Default) */
   --bg-darkest: #070913;

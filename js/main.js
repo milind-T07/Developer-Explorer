@@ -170,6 +170,9 @@ async function handleDeveloperSearch(event) {
     );
 
     showToast(`Loaded analytics for @${user.login}`, "success");
+
+    // Smoothly scroll down to the profile overview level as requested
+    scrollToProfileOverview();
   } catch (error) {
     setError(error.message);
     clearDeveloperData();
@@ -180,6 +183,28 @@ async function handleDeveloperSearch(event) {
     if (searchSubmitBtn) searchSubmitBtn.disabled = false;
     updateSearchButtonLoading(false);
   }
+}
+
+function scrollToProfileOverview() {
+  setTimeout(() => {
+    const target = document.getElementById("statusSection");
+    if (!target) return;
+
+    const isReducedMotion = document.body.classList.contains("reduced-motion") ||
+      (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+
+    const isMobile = window.innerWidth <= 900;
+    const mobileHeader = document.querySelector(".mobile-header");
+    const headerHeight = (isMobile && mobileHeader) ? mobileHeader.offsetHeight : 0;
+    const topMargin = 20;
+
+    const targetPosition = target.getBoundingClientRect().top + window.pageYOffset - (headerHeight + topMargin);
+
+    window.scrollTo({
+      top: Math.max(0, targetPosition),
+      behavior: isReducedMotion ? "auto" : "smooth"
+    });
+  }, 120);
 }
 
 function updateSearchButtonLoading(loading) {
@@ -512,13 +537,10 @@ function toggleThemeMode() {
 // -------------------------------------------------------------
 function handleShareProfile() {
   if (!appState.currentUser) {
-    showToast("No active developer profile to share", "info");
+    showToast("Load a developer profile first to share", "info");
     return;
   }
-  const shareUrl = `${window.location.origin}${window.location.pathname}?user=${appState.currentUser.login}${window.location.hash}`;
-  copyToClipboard(shareUrl).then(() => {
-    showToast("Shareable profile link copied to clipboard!", "success");
-  });
+  openShareModal(appState.currentUser);
 }
 
 function handleCopySummary() {
@@ -605,7 +627,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Load and apply saved user settings
   const settings = getSavedSettings();
   applyThemeMode(settings.mode || "dark");
-  applyAccentTone(settings.accent || "indigo");
+  applyAccentTone(settings.accent || "cyan");
   applyReducedMotion(Boolean(settings.reducedMotion));
   applyDefaultLayout(settings.viewMode || "grid");
 
@@ -796,12 +818,12 @@ document.addEventListener("DOMContentLoaded", () => {
     resetSettingsBtn.addEventListener("click", () => {
       saveUserSettings({
         mode: "dark",
-        accent: "indigo",
+        accent: "cyan",
         viewMode: "grid",
         reducedMotion: false
       });
       applyThemeMode("dark");
-      applyAccentTone("indigo");
+      applyAccentTone("cyan");
       applyReducedMotion(false);
       applyDefaultLayout("grid");
       showToast("Settings restored to defaults", "success");
@@ -871,6 +893,15 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  const shareModal = document.getElementById("shareProfileModal");
+  if (shareModal) {
+    shareModal.addEventListener("click", (e) => {
+      if (e.target === shareModal) {
+        closeShareModal();
+      }
+    });
+  }
+
   // Global Keyboard Shortcuts
   document.addEventListener("keydown", (e) => {
     if ((e.key === "/" || (e.key === "k" && (e.metaKey || e.ctrlKey))) && document.activeElement !== usernameInput) {
@@ -882,6 +913,8 @@ document.addEventListener("DOMContentLoaded", () => {
     } else if (e.key === "Escape") {
       if (repoModal && repoModal.classList.contains("open")) {
         closeRepoModal();
+      } else if (shareModal && shareModal.classList.contains("open")) {
+        closeShareModal();
       } else if (document.body.classList.contains("sidebar-open")) {
         closeMobileMenu();
       } else if (document.activeElement === usernameInput) {
@@ -910,10 +943,20 @@ document.addEventListener("DOMContentLoaded", () => {
   const initialHash = window.location.hash || "#overview";
   switchView(initialHash);
 
-  // Auto-load Developer Profile from URL Query or default preset
+  // Auto-load Developer Profile ONLY if user query parameter is provided in the URL
   const urlParams = new URLSearchParams(window.location.search);
-  const userParam = urlParams.get("user") || APP_CONFIG.defaultUsername || "torvalds";
-  triggerSearch(userParam);
+  const userParam = urlParams.get("user");
+  if (userParam && userParam.trim()) {
+    triggerSearch(userParam.trim());
+  } else {
+    // Start clean: do not auto-load or return a profile when entering the website
+    clearDeveloperData();
+    updateStatus(
+      "Ready to Explore",
+      "Enter a GitHub username above or choose a preset.",
+      "info"
+    );
+  }
 
   console.log(`${APP_CONFIG.name} v${APP_CONFIG.version} initialized successfully.`);
 });

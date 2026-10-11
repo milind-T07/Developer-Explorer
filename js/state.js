@@ -3,7 +3,7 @@ const appState = {
   activeView: "overview", // 'overview' | 'repositories' | 'compare' | 'saved' | 'settings'
 
   // Overview Developer Analytics State (Independent)
-  overviewUsername: "torvalds",
+  overviewUsername: "",
   currentUser: null,
   overviewRepositories: [],
   repositories: [], // backward-compatible alias for overview developer repos
@@ -31,7 +31,7 @@ const appState = {
 
   // Theme & Preferences
   themeMode: "dark", // 'dark' | 'light'
-  accent: "indigo", // 'indigo' | 'cyan' | 'emerald' | 'amber' | 'violet' | 'rose'
+  accent: "cyan", // 'indigo' | 'cyan' | 'emerald' | 'amber' | 'violet' | 'rose'
   reducedMotion: false,
   viewMode: "grid", // default layout setting
 

@@ -583,6 +583,49 @@
   fill: currentColor;
 }
 
+.topbar__divider {
+  width: 1px;
+  height: 24px;
+  background: var(--border-color);
+  margin: 0 0.35rem;
+}
+
+.topbar__theme-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  min-height: 36px;
+  padding: 0.25rem 0.55rem;
+  border-radius: var(--border-radius-sm);
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  transition: all var(--transition-fast);
+}
+
+.topbar__theme-controls:hover {
+  border-color: var(--border-strong);
+}
+
+.topbar__theme-controls .mode-toggle-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--border-radius-xs);
+  background: var(--bg-pill);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.topbar__theme-controls .mode-toggle-btn:hover {
+  background: var(--accent-subtle);
+  color: var(--accent-primary);
+  border-color: var(--accent-border);
+}
+
 /* Stat Cards (5 metrics) */
 .stat-card {
   position: relative;
@@ -1776,6 +1819,169 @@
   align-items: center;
   justify-content: flex-end;
   gap: 0.65rem;
+}
+
+/* Share Profile Modal Styling */
+.modal-container--share {
+  max-width: 490px;
+}
+
+.share-modal-body {
+  padding: 1.25rem 1.5rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+  overflow-y: auto;
+}
+
+.share-profile-card {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.85rem 1rem;
+  border-radius: var(--border-radius-md);
+  background: var(--bg-pill);
+  border: 1px solid var(--border-color);
+}
+
+.share-profile-card__avatar {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--accent-border);
+}
+
+.share-profile-card__info {
+  display: flex;
+  flex-direction: column;
+}
+
+.share-profile-card__name {
+  font-size: 0.98rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.share-profile-card__handle {
+  font-size: 0.82rem;
+  color: var(--accent-primary);
+  font-weight: 600;
+}
+
+.share-profile-card__meta {
+  font-size: 0.74rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.share-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.share-group__label {
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.share-input-row {
+  display: flex;
+  gap: 0.45rem;
+  align-items: center;
+}
+
+.share-input {
+  flex: 1;
+  min-height: 36px;
+  padding: 0.45rem 0.75rem;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-xs);
+  color: var(--text-primary);
+  font-size: 0.82rem;
+  font-family: var(--font-mono, monospace);
+  outline: none;
+  transition: border-color var(--transition-fast);
+}
+
+.share-input:focus {
+  border-color: var(--accent-primary);
+}
+
+.share-channels {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.share-channels__title {
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.share-channels__grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.55rem;
+}
+
+.share-channel-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.6rem 0.85rem;
+  border-radius: var(--border-radius-xs);
+  font-size: 0.82rem;
+  font-weight: 600;
+  border: 1px solid var(--border-color);
+  background: var(--bg-card);
+  color: var(--text-primary);
+  text-decoration: none;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.share-channel-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+.share-channel-btn--whatsapp:hover {
+  color: #25D366;
+  border-color: rgba(37, 211, 102, 0.4);
+  background: rgba(37, 211, 102, 0.1);
+}
+
+.share-channel-btn--twitter:hover {
+  color: #1DA1F2;
+  border-color: rgba(29, 161, 242, 0.4);
+  background: rgba(29, 161, 242, 0.1);
+}
+
+.share-channel-btn--linkedin:hover {
+  color: #0A66C2;
+  border-color: rgba(10, 102, 194, 0.4);
+  background: rgba(10, 102, 194, 0.1);
+}
+
+.share-channel-btn--email:hover {
+  color: var(--accent-primary);
+  border-color: var(--accent-border);
+  background: var(--accent-subtle);
 }
 
 /* Toast Notifications */

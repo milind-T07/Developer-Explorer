@@ -5,7 +5,7 @@ const APP_CONFIG = {
   timeoutMs: 12000,
   cacheTtlMs: 300000, // 5 minutes
   maxRetries: 1,
-  defaultUsername: "torvalds",
+  defaultUsername: "",
   reposPerPage: 100
 };
 
