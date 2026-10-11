@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="GitHub Developer Explorer — Next-Gen Developer Analytics, Repository Insights, and Language Breakdown." />
-  <title>GitHub Developer Explorer — Advanced Developer Analytics</title>
+  <meta name="description" content="DevExplorer — Next-Gen GitHub Developer Analytics, Repository Intelligence, and Language Analytics." />
+  <title>DevExplorer — GitHub Developer Analytics</title>
 
   <!-- Google Fonts Preconnect -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -19,11 +19,11 @@
 </head>
 
 <body>
-  <!-- Main Application Layout Grid -->
+  <!-- Application Shell -->
   <div class="app">
 
     <!-- Sidebar Navigation -->
-    <aside class="sidebar" id="mainSidebar">
+    <aside class="sidebar" id="mainSidebar" aria-label="Main Navigation">
       <button class="sidebar__close" id="menuClose" aria-label="Close navigation menu">
         <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
           <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -39,37 +39,53 @@
             </svg>
           </div>
           <div>
-            <h1 class="sidebar__title">DevExplorer</h1>
-            <p class="sidebar__subtitle">GitHub Analytics v2.5</p>
+            <h1 class="sidebar__title font-heading">DevExplorer</h1>
+            <p class="sidebar__subtitle">GitHub Analytics</p>
           </div>
         </div>
 
-        <nav class="sidebar__nav" aria-label="Main navigation">
-          <a href="#overview" class="sidebar__link active">
+        <nav class="sidebar__nav" aria-label="Application Sections">
+          <a href="#overview" class="sidebar__link active" data-view="overview" id="nav-overview">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
             <span>Overview</span>
           </a>
-          <a href="#repositories" class="sidebar__link">
+          <a href="#repositories" class="sidebar__link" data-view="repositories" id="nav-repositories">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
             <span>Repositories</span>
           </a>
-          <a href="#languages" class="sidebar__link">
+          <a href="#languages" class="sidebar__link" data-view="languages" id="nav-languages">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
             <span>Languages</span>
+          </a>
+          <a href="#compare" class="sidebar__link" data-view="compare" id="nav-compare">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 3h5v5"></path><path d="M4 20L21 3"></path><path d="M21 16v5h-5"></path><path d="M15 15l6 6"></path><path d="M4 4l5 5"></path></svg>
+            <span>Compare</span>
+          </a>
+          <a href="#saved" class="sidebar__link" data-view="saved" id="nav-saved">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+            <span>Saved Profiles</span>
+          </a>
+          <a href="#settings" class="sidebar__link" data-view="settings" id="nav-settings">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+            <span>Settings</span>
           </a>
         </nav>
       </div>
 
       <div class="sidebar__footer">
-        <div class="theme-picker">
-          <span class="theme-picker__label">Accent</span>
-          <div class="theme-picker__options">
-            <button class="theme-dot theme-dot--indigo active" data-theme="indigo" title="Indigo"></button>
-            <button class="theme-dot theme-dot--cyan" data-theme="cyan" title="Cyan"></button>
-            <button class="theme-dot theme-dot--emerald" data-theme="emerald" title="Emerald"></button>
-            <button class="theme-dot theme-dot--amber" data-theme="amber" title="Amber"></button>
-            <button class="theme-dot theme-dot--violet" data-theme="violet" title="Violet"></button>
-            <button class="theme-dot theme-dot--rose" data-theme="rose" title="Rose"></button>
+        <div class="sidebar-controls">
+          <button class="mode-toggle-btn" id="modeToggleBtn" title="Toggle Light / Dark mode" aria-label="Toggle theme mode">
+            <svg id="modeIconDark" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+            <svg id="modeIconLight" style="display:none;" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+          </button>
+
+          <div class="theme-picker" title="Accent color">
+            <button class="theme-dot theme-dot--indigo active" data-theme="indigo" aria-label="Indigo Accent"></button>
+            <button class="theme-dot theme-dot--cyan" data-theme="cyan" aria-label="Cyan Accent"></button>
+            <button class="theme-dot theme-dot--emerald" data-theme="emerald" aria-label="Emerald Accent"></button>
+            <button class="theme-dot theme-dot--amber" data-theme="amber" aria-label="Amber Accent"></button>
+            <button class="theme-dot theme-dot--violet" data-theme="violet" aria-label="Violet Accent"></button>
+            <button class="theme-dot theme-dot--rose" data-theme="rose" aria-label="Rose Accent"></button>
           </div>
         </div>
 
@@ -83,15 +99,15 @@
     <!-- Mobile Header -->
     <header class="mobile-header">
       <div class="mobile-header__brand">
-        <div class="sidebar__logo-wrapper" style="width:36px; height:36px;">
-          <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+        <div class="sidebar__logo-wrapper" style="width:32px; height:32px;">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
             <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
           </svg>
         </div>
-        <h2 style="font-size:1.1rem; font-weight:800;" class="font-heading">DevExplorer</h2>
+        <h2 style="font-size:1rem; font-weight:800;" class="font-heading">DevExplorer</h2>
       </div>
-      <button class="mobile-menu-toggle" id="menuToggle" aria-label="Open menu">
-        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
+      <button class="mobile-menu-toggle" id="menuToggle" aria-label="Open navigation menu">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
           <line x1="3" y1="12" x2="21" y2="12"></line>
           <line x1="3" y1="6" x2="21" y2="6"></line>
           <line x1="3" y1="18" x2="21" y2="18"></line>
@@ -101,267 +117,507 @@
     <div class="mobile-menu-overlay" id="menuOverlay"></div>
 
     <!-- Main Content Area -->
-    <main class="main-content">
+    <main class="main-content" id="mainContent">
+
       <!-- Topbar Header -->
       <header class="topbar">
         <div class="topbar__left">
           <p class="topbar__eyebrow">GitHub Analytics Suite</p>
-          <h2 class="topbar__title font-heading">Developer Explorer</h2>
+          <h2 class="topbar__title font-heading" id="activeViewTitle">Overview Dashboard</h2>
+        </div>
+
+        <!-- Global Action Tools -->
+        <div class="topbar__actions">
+          <button class="topbar-btn topbar-btn--bookmark" id="bookmarkProfileBtn" title="Save profile to bookmarks" aria-label="Bookmark profile">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+            <span id="bookmarkBtnText">Save</span>
+          </button>
+          <button class="topbar-btn" id="shareProfileBtn" title="Copy shareable link" aria-label="Share profile">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+            <span>Share</span>
+          </button>
+          <button class="topbar-btn" id="copySummaryBtn" title="Copy Markdown summary to clipboard" aria-label="Copy summary">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            <span>Summary</span>
+          </button>
+          <button class="topbar-btn" id="exportCsvBtn" title="Export retrieved repositories as CSV" aria-label="Export CSV">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+            <span>CSV</span>
+          </button>
+          <button class="topbar-btn" id="exportJsonBtn" title="Export complete analytics report as JSON" aria-label="Export JSON">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+            <span>JSON</span>
+          </button>
+          <button class="topbar-btn" id="printReportBtn" title="Print executive analytics report" aria-label="Print report">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+            <span>Print</span>
+          </button>
         </div>
       </header>
 
-      <!-- Hero Search Section -->
-      <section class="hero" id="overview">
-        <div class="hero__content">
-          <span class="hero__badge">
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
-            Explore Developer Insights
-          </span>
-          <h2 class="hero__title font-heading">Discover the GitHub Universe</h2>
-          <p class="hero__description">
-            Search any developer handle to analyze public repositories, language distributions, stargazers, forks, and profile metrics in real-time.
-          </p>
-
-          <div class="search-container">
-            <form class="search-form" id="searchForm">
-              <div class="search-form__input-wrapper">
-                <svg class="search-form__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                <input
-                  type="text"
-                  id="usernameInput"
-                  class="search-form__input"
-                  placeholder="Enter GitHub username (e.g. torvalds, gaearon, yyx99)..."
-                  autocomplete="off"
-                  spellcheck="false"
-                />
-                <span class="search-form__shortcut">⌘K</span>
-              </div>
-              <button class="search-form__button" type="submit">
-                <span>Explore</span>
-                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-              </button>
-            </form>
-
-            <!-- Quick Presets -->
-            <div class="preset-devs" id="presetDevsContainer">
-              <span class="preset-devs__label">Featured Presets:</span>
-              <button class="preset-chip" data-username="torvalds">
-                <img src="https://github.com/torvalds.png" class="preset-chip__avatar" alt="torvalds" />
-                Linus Torvalds
-              </button>
-              <button class="preset-chip" data-username="gaearon">
-                <img src="https://github.com/gaearon.png" class="preset-chip__avatar" alt="gaearon" />
-                Dan Abramov
-              </button>
-              <button class="preset-chip" data-username="yyx99">
-                <img src="https://github.com/yyx99.png" class="preset-chip__avatar" alt="yyx99" />
-                Evan You
-              </button>
-              <button class="preset-chip" data-username="karpathy">
-                <img src="https://github.com/karpathy.png" class="preset-chip__avatar" alt="karpathy" />
-                Andrej Karpathy
-              </button>
-              <button class="preset-chip" data-username="rich-harris">
-                <img src="https://github.com/rich-harris.png" class="preset-chip__avatar" alt="rich-harris" />
-                Rich Harris
-              </button>
-            </div>
-
-            <!-- Recent Searches -->
-            <div class="recent-searches" id="recentSearches"></div>
+      <!-- Compact Search Section (Accessible on all primary analytics views) -->
+      <section class="search-section" aria-label="Developer Search">
+        <form class="search-form" id="searchForm">
+          <div class="search-form__input-wrapper">
+            <svg class="search-form__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <input
+              type="text"
+              id="usernameInput"
+              class="search-form__input"
+              placeholder="Search GitHub username (e.g. torvalds, gaearon, yyx99)..."
+              autocomplete="off"
+              spellcheck="false"
+              aria-label="GitHub username search"
+            />
+            <button type="button" class="search-form__clear-btn" id="searchClearBtn" title="Clear input" aria-label="Clear input">&times;</button>
+            <span class="search-form__shortcut">⌘K</span>
           </div>
+          <button class="search-form__button" id="searchSubmitBtn" type="submit" aria-label="Explore profile">
+            <span id="searchBtnText">Explore</span>
+            <svg id="searchBtnIcon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+          </button>
+        </form>
+
+        <!-- Featured Presets Chips -->
+        <div class="preset-devs" id="presetDevsContainer" aria-label="Featured Presets">
+          <span class="preset-devs__label">Presets:</span>
+          <!-- Dynamic presets populated from config -->
         </div>
+
+        <!-- Recent Searches Chips -->
+        <div id="recentSearchesContainer"></div>
       </section>
 
       <!-- Status Banner -->
-      <section class="status-section" id="status">
+      <section class="status-section" id="statusSection" aria-live="polite">
         <div class="status-card status-card--info" id="statusCard">
-          <div class="status-card__icon-wrapper">
-            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+          <div class="status-card__left">
+            <div class="status-card__icon-wrapper" id="statusCardIcon">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+            </div>
+            <div>
+              <h3 class="status-card__title" id="statusTitle">Ready to Explore</h3>
+              <p class="status-card__message" id="statusMessage">Enter a GitHub username above or choose a preset.</p>
+            </div>
           </div>
-          <div>
-            <h3 class="status-card__title">Ready to Explore</h3>
-            <p class="status-card__message">Enter a GitHub username above or click one of the quick presets.</p>
+          <div id="statusActions"></div>
+        </div>
+      </section>
+
+      <!-- VIEW 1: OVERVIEW -->
+      <section class="view-section active" id="view-overview" aria-label="Overview View">
+        <!-- 5 Key Metrics Grid -->
+        <div class="stats-grid" aria-label="Developer Statistics">
+          <article class="stat-card">
+            <div class="stat-card__header">
+              <span class="stat-card__label">Public Repos</span>
+              <div class="stat-card__icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+              </div>
+            </div>
+            <h3 class="stat-card__value font-heading" id="publicRepos">0</h3>
+          </article>
+
+          <article class="stat-card">
+            <div class="stat-card__header">
+              <span class="stat-card__label">Followers</span>
+              <div class="stat-card__icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+              </div>
+            </div>
+            <h3 class="stat-card__value font-heading" id="followers">0</h3>
+          </article>
+
+          <article class="stat-card">
+            <div class="stat-card__header">
+              <span class="stat-card__label">Following</span>
+              <div class="stat-card__icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><polyline points="17 11 19 13 23 9"></polyline></svg>
+              </div>
+            </div>
+            <h3 class="stat-card__value font-heading" id="following">0</h3>
+          </article>
+
+          <article class="stat-card">
+            <div class="stat-card__header">
+              <span class="stat-card__label">Total Stars *</span>
+              <div class="stat-card__icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+              </div>
+            </div>
+            <h3 class="stat-card__value font-heading" id="totalStars">0</h3>
+          </article>
+
+          <article class="stat-card">
+            <div class="stat-card__header">
+              <span class="stat-card__label">Total Forks *</span>
+              <div class="stat-card__icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="18" r="3"></circle><circle cx="6" cy="6" r="3"></circle><circle cx="18" cy="6" r="3"></circle><path d="M18 9v1a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V9"></path><path d="M12 12v3"></path></svg>
+              </div>
+            </div>
+            <h3 class="stat-card__value font-heading" id="totalForks">0</h3>
+          </article>
+        </div>
+
+        <p class="stats-disclaimer">
+          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+          <span id="statsDisclaimerText">* Total stars and forks calculated from retrieved public repositories.</span>
+        </p>
+
+        <!-- Two Column Dashboard Layout -->
+        <div class="dashboard-grid">
+          <!-- Developer Profile Card -->
+          <article class="profile-card" id="profileCard">
+            <div class="profile-card__banner" id="profileBannerBg"></div>
+            <div class="profile-card__body">
+              <div class="profile-card__avatar-wrapper">
+                <img src="" alt="Avatar" class="profile-card__avatar" id="userAvatar" />
+                <div class="profile-card__avatar-placeholder" id="userAvatarPlaceholder">
+                  <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                </div>
+              </div>
+
+              <h3 class="profile-card__name font-heading" id="userName">Developer</h3>
+              <p class="profile-card__username" id="userUsername">@username</p>
+              <p class="profile-card__bio" id="userBio">Search for a developer to inspect analytics.</p>
+
+              <div class="profile-card__details" id="userDetails"></div>
+
+              <div class="profile-card__actions">
+                <a href="#" class="btn btn--primary" id="githubProfileLink" target="_blank" rel="noopener noreferrer">
+                  <span>View on GitHub</span>
+                  <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                </a>
+                <button class="btn btn--secondary" id="copyProfileBtn">
+                  <span>Copy Profile URL</span>
+                </button>
+              </div>
+            </div>
+          </article>
+
+          <!-- Right Column Analytics -->
+          <div class="overview-right-col">
+            <!-- Language Distribution Summary -->
+            <article class="overview-card" id="overviewLanguageCard">
+              <div class="section-header">
+                <div>
+                  <p class="section-header__eyebrow">Language Intelligence</p>
+                  <h3 class="section-header__title font-heading">Primary Language Distribution</h3>
+                </div>
+                <a href="#languages" class="section-header__link" data-view="languages">Full Breakdown ↗</a>
+              </div>
+              <div class="segmented-bar" id="segmentedLangBar"></div>
+              <div class="language-list" id="languageList">
+                <p class="empty-text">Languages will be analyzed when a profile is loaded.</p>
+              </div>
+            </article>
+
+            <!-- Top Starred Repositories Showcase -->
+            <article class="overview-card" id="topReposCard">
+              <div class="section-header">
+                <div>
+                  <p class="section-header__eyebrow">Top Contributions</p>
+                  <h3 class="section-header__title font-heading">Most Starred Repositories</h3>
+                </div>
+                <a href="#repositories" class="section-header__link" data-view="repositories">View All Repos ↗</a>
+              </div>
+              <div class="top-repos-grid" id="topReposShowcase">
+                <p class="empty-text">Top repositories will be displayed here.</p>
+              </div>
+            </article>
           </div>
         </div>
       </section>
 
-      <!-- Metrics Stats Grid -->
-      <section class="stats-grid" aria-label="Developer statistics">
-        <article class="stat-card">
-          <div class="stat-card__header">
-            <span class="stat-card__label">Public Repos</span>
-            <div class="stat-card__icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+      <!-- VIEW 2: REPOSITORIES -->
+      <section class="view-section" id="view-repositories" aria-label="Repositories View">
+        <div class="repositories-section">
+          <div class="section-header">
+            <div>
+              <p class="section-header__eyebrow">Repository Intelligence</p>
+              <h3 class="section-header__title font-heading">Public Repositories Explorer</h3>
             </div>
           </div>
-          <h3 class="stat-card__value" id="publicRepos">0</h3>
-        </article>
 
-        <article class="stat-card">
-          <div class="stat-card__header">
-            <span class="stat-card__label">Followers</span>
-            <div class="stat-card__icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-            </div>
-          </div>
-          <h3 class="stat-card__value" id="followers">0</h3>
-        </article>
-
-        <article class="stat-card">
-          <div class="stat-card__header">
-            <span class="stat-card__label">Following</span>
-            <div class="stat-card__icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><polyline points="17 11 19 13 23 9"></polyline></svg>
-            </div>
-          </div>
-          <h3 class="stat-card__value" id="following">0</h3>
-        </article>
-
-        <article class="stat-card">
-          <div class="stat-card__header">
-            <span class="stat-card__label">Total Stars</span>
-            <div class="stat-card__icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
-            </div>
-          </div>
-          <h3 class="stat-card__value" id="totalStars">0</h3>
-        </article>
-
-        <article class="stat-card">
-          <div class="stat-card__header">
-            <span class="stat-card__label">Total Forks</span>
-            <div class="stat-card__icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="18" r="3"></circle><circle cx="6" cy="6" r="3"></circle><circle cx="18" cy="6" r="3"></circle><path d="M18 9v1a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V9"></path><path d="M12 12v3"></path></svg>
-            </div>
-          </div>
-          <h3 class="stat-card__value" id="totalForks">0</h3>
-        </article>
-      </section>
-
-      <!-- Dashboard Two-Column Grid -->
-      <section class="dashboard-grid">
-        <!-- Developer Profile Card -->
-        <article class="profile-card" id="profile">
-          <div class="profile-card__banner" id="profileBannerBg"></div>
-          <div class="profile-card__body">
-            <div class="profile-card__avatar-wrapper">
-              <img src="" alt="Avatar" class="profile-card__avatar" id="userAvatar" />
-              <div class="profile-card__avatar-placeholder" id="userAvatarPlaceholder">
-                <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+          <!-- Filter Toolbar -->
+          <div class="repo-filter-bar">
+            <div class="repo-filter-bar__left">
+              <div class="repo-search-wrapper">
+                <svg class="repo-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                <input type="text" id="repoSearchInput" class="repo-search-input" placeholder="Search repositories by name, topic, or description..." />
               </div>
             </div>
 
-            <h3 class="profile-card__name font-heading" id="userName">Developer Name</h3>
-            <p class="profile-card__username" id="userUsername">@username</p>
-            <p class="profile-card__bio" id="userBio">Search for a GitHub username to load developer profile insights.</p>
+            <div class="repo-filter-bar__right">
+              <select id="filterLanguage" class="repo-select" aria-label="Filter by programming language">
+                <option value="all">All Languages</option>
+              </select>
 
-            <div class="profile-card__details" id="userDetails"></div>
+              <select id="sortRepos" class="repo-select" aria-label="Sort repositories">
+                <option value="stars">Most Stars</option>
+                <option value="forks">Most Forks</option>
+                <option value="updated">Recently Updated</option>
+                <option value="created">Recently Created</option>
+                <option value="name">Name (A-Z)</option>
+                <option value="size">Size</option>
+              </select>
 
-            <div class="profile-card__actions">
-              <a href="#" class="btn btn--primary" id="githubProfileLink" target="_blank" rel="noopener noreferrer">
-                <span>View GitHub</span>
-                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-              </a>
-              <button class="btn btn--secondary" id="copyProfileBtn">
-                <span>Copy Link</span>
-                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-              </button>
-            </div>
-          </div>
-        </article>
-
-        <!-- Language Distribution Breakdown -->
-        <article class="language-card" id="languages">
-          <div class="section-header">
-            <div>
-              <p class="section-header__eyebrow">Repository Analytics</p>
-              <h3 class="section-header__title font-heading">Language Distribution</h3>
+              <div class="view-toggle">
+                <button class="view-btn active" id="viewGridBtn" title="Grid View" aria-label="Grid layout">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                </button>
+                <button class="view-btn" id="viewListBtn" title="List View" aria-label="List layout">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+                </button>
+              </div>
             </div>
           </div>
 
-          <!-- Multi-Segmented Progress Bar -->
-          <div class="segmented-bar" id="segmentedLangBar"></div>
+          <!-- Topics Filter Bar -->
+          <div class="topic-filter-bar" id="topicFilterContainer"></div>
 
-          <div class="language-list" id="languageList">
-            <p class="empty-text">Language usage will appear after searching a developer.</p>
+          <!-- Status count & indicator -->
+          <div class="repo-status-header">
+            <span id="repoCountText">Showing 0 repositories</span>
+            <span id="repoPaginationNotice"></span>
           </div>
-        </article>
+
+          <!-- Repository Cards Grid -->
+          <div class="repositories-grid" id="repositoriesGrid">
+            <article class="empty-card">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+              <h4>No developer profile loaded</h4>
+              <p>Search a GitHub username above to explore repositories.</p>
+            </article>
+          </div>
+
+          <!-- Pagination / Load More Button -->
+          <div class="pagination-container" id="loadMoreContainer"></div>
+        </div>
       </section>
 
-      <!-- Repositories Section -->
-      <section class="repositories-section" id="repositories">
-        <div class="section-header">
-          <div>
-            <p class="section-header__eyebrow">Public Repositories</p>
-            <h3 class="section-header__title font-heading">Repositories</h3>
-          </div>
-        </div>
-
-        <div class="repo-filter-bar">
-          <div class="repo-filter-bar__left">
-            <div class="repo-search-wrapper">
-              <svg class="repo-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-              <input type="text" id="repoSearchInput" class="repo-search-input" placeholder="Filter repositories by name, topic, or description..." />
+      <!-- VIEW 3: LANGUAGES -->
+      <section class="view-section" id="view-languages" aria-label="Languages View">
+        <div class="languages-section">
+          <div class="section-header">
+            <div>
+              <p class="section-header__eyebrow">Deep Intelligence</p>
+              <h3 class="section-header__title font-heading">Programming Language Analytics</h3>
             </div>
           </div>
 
-          <div class="repo-filter-bar__right">
-            <select id="filterLanguage" class="repo-select">
-              <option value="all">All Languages</option>
-            </select>
-
-            <select id="sortRepos" class="repo-select">
-              <option value="stars">Most Stars</option>
-              <option value="forks">Most Forks</option>
-              <option value="updated">Recently Updated</option>
-              <option value="name">Name A-Z</option>
-              <option value="size">Size</option>
-            </select>
-
-            <div class="view-toggle">
-              <button class="view-btn active" id="viewGridBtn" title="Grid View">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
-              </button>
-              <button class="view-btn" id="viewListBtn" title="List View">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
-              </button>
+          <!-- Summary Metric Cards -->
+          <div class="languages-summary-grid">
+            <div class="stat-card">
+              <span class="stat-card__label">Unique Languages</span>
+              <h3 class="stat-card__value font-heading" id="langTotalCount">0</h3>
+            </div>
+            <div class="stat-card">
+              <span class="stat-card__label">Primary Stack</span>
+              <h3 class="stat-card__value font-heading" id="langTopName" style="font-size:1.35rem;">None</h3>
+            </div>
+            <div class="stat-card">
+              <span class="stat-card__label">Dominance</span>
+              <h3 class="stat-card__value font-heading" id="langTopPercent">0%</h3>
             </div>
           </div>
+
+          <p class="stats-disclaimer">
+            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+            <span>Language shares are computed from the primary language attribute assigned to retrieved repositories.</span>
+          </p>
+
+          <!-- Large Multi-Segment Bar -->
+          <div class="segmented-bar" id="langViewSegmentedBar" style="height:14px; margin-top:1rem;"></div>
+
+          <!-- Detailed Language Cards Grid -->
+          <div class="languages-cards-grid" id="langViewCardsGrid">
+            <article class="empty-card">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+              <h4>No language data available</h4>
+              <p>Load a developer profile with public repositories to analyze their languages.</p>
+            </article>
+          </div>
         </div>
+      </section>
 
-        <!-- Topic Pills Container -->
-        <div class="topic-filter-bar" id="topicFilterContainer"></div>
+      <!-- VIEW 4: COMPARE DEVELOPERS -->
+      <section class="view-section" id="view-compare" aria-label="Compare Developers View">
+        <div class="compare-section">
+          <div class="section-header">
+            <div>
+              <p class="section-header__eyebrow">Head-to-Head Analytics</p>
+              <h3 class="section-header__title font-heading">Compare Developers</h3>
+            </div>
+          </div>
 
-        <div class="repositories-grid" id="repositoriesGrid">
-          <article class="repo-empty-card">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-            <h4>No developer profile loaded</h4>
-            <p>Enter a username above or choose a preset to start exploring.</p>
-          </article>
+          <!-- Comparison Form Inputs -->
+          <form id="compareForm" class="compare-inputs-grid">
+            <input type="text" id="compareUser1Input" class="repo-search-input" placeholder="First handle (e.g. torvalds)" autocomplete="off" />
+            <button type="button" class="btn btn--secondary" id="swapCompareBtn" title="Swap developers" aria-label="Swap accounts">⇄</button>
+            <input type="text" id="compareUser2Input" class="repo-search-input" placeholder="Second handle (e.g. karpathy)" autocomplete="off" />
+            <button type="submit" class="btn btn--primary" id="compareSubmitBtn">Compare</button>
+          </form>
+
+          <!-- Preset Comparison Chips -->
+          <div class="preset-devs" id="comparePresetsContainer" style="margin-bottom:1rem;">
+            <span class="preset-devs__label">Quick Compare:</span>
+            <!-- Populated from config -->
+          </div>
+
+          <!-- Side-by-Side Comparison Matrix -->
+          <div id="compareMatrixContainer">
+            <article class="empty-card">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M16 3h5v5"></path><path d="M4 20L21 3"></path><path d="M21 16v5h-5"></path><path d="M15 15l6 6"></path><path d="M4 4l5 5"></path></svg>
+              <h4>Enter two usernames to compare</h4>
+              <p>Compare followers, stars, repository volume, account age, and programming languages side-by-side.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- VIEW 5: SAVED PROFILES & HISTORY -->
+      <section class="view-section" id="view-saved" aria-label="Saved Profiles View">
+        <div class="saved-section">
+          <div class="section-header">
+            <div>
+              <p class="section-header__eyebrow">Bookmarks & History</p>
+              <h3 class="section-header__title font-heading">Saved Profiles</h3>
+            </div>
+          </div>
+
+          <!-- Tabs -->
+          <div class="saved-tabs">
+            <button class="saved-tab-btn active" id="tabBookmarksBtn">Bookmarked Profiles (<span id="bookmarkCountBadge">0</span>)</button>
+            <button class="saved-tab-btn" id="tabHistoryBtn">Recent Search History (<span id="historyCountBadge">0</span>)</button>
+          </div>
+
+          <!-- Bookmarks Grid -->
+          <div id="bookmarksContainer">
+            <div class="saved-profiles-grid" id="bookmarksGrid"></div>
+          </div>
+
+          <!-- Search History List -->
+          <div id="historyContainer" style="display:none;">
+            <div style="display:flex; justify-content:flex-end; margin-bottom:1rem;">
+              <button class="btn btn--secondary btn--sm" id="clearAllHistoryBtn">Clear Search History</button>
+            </div>
+            <div id="historyList"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- VIEW 6: SETTINGS -->
+      <section class="view-section" id="view-settings" aria-label="Settings View">
+        <div class="settings-section">
+          <div class="section-header">
+            <div>
+              <p class="section-header__eyebrow">Preferences & Personalization</p>
+              <h3 class="section-header__title font-heading">Application Settings</h3>
+            </div>
+          </div>
+
+          <div class="settings-grid">
+            <!-- Appearance Panel -->
+            <div class="settings-panel">
+              <div class="settings-panel__header">
+                <h4>Theme & Color Palette</h4>
+                <p>Choose your preferred interface contrast mode and accent color.</p>
+              </div>
+
+              <div class="settings-control-row">
+                <label>Theme Mode</label>
+                <div class="radio-pills" id="settingsModePills">
+                  <button type="button" class="radio-pill-btn active" data-mode="dark">Dark</button>
+                  <button type="button" class="radio-pill-btn" data-mode="light">Light</button>
+                </div>
+              </div>
+
+              <div class="settings-control-row">
+                <label>Accent Tone</label>
+                <div class="theme-picker" id="settingsAccentPicker">
+                  <button type="button" class="theme-dot theme-dot--indigo active" data-theme="indigo" title="Indigo"></button>
+                  <button type="button" class="theme-dot theme-dot--cyan" data-theme="cyan" title="Cyan"></button>
+                  <button type="button" class="theme-dot theme-dot--emerald" data-theme="emerald" title="Emerald"></button>
+                  <button type="button" class="theme-dot theme-dot--amber" data-theme="amber" title="Amber"></button>
+                  <button type="button" class="theme-dot theme-dot--violet" data-theme="violet" title="Violet"></button>
+                  <button type="button" class="theme-dot theme-dot--rose" data-theme="rose" title="Rose"></button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Repository Layout Panel -->
+            <div class="settings-panel">
+              <div class="settings-panel__header">
+                <h4>Repository Layout</h4>
+                <p>Default presentation style for the repository explorer.</p>
+              </div>
+
+              <div class="settings-control-row">
+                <label>Default Explorer View</label>
+                <div class="radio-pills" id="settingsLayoutPills">
+                  <button type="button" class="radio-pill-btn active" data-layout="grid">Grid</button>
+                  <button type="button" class="radio-pill-btn" data-layout="list">List</button>
+                </div>
+              </div>
+
+              <div class="settings-control-row">
+                <label>Reduced Motion</label>
+                <button type="button" class="btn btn--secondary btn--sm" id="toggleReducedMotionBtn">
+                  <span id="reducedMotionStatusText">Disabled</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Data & Storage Panel -->
+            <div class="settings-panel">
+              <div class="settings-panel__header">
+                <h4>Data & Local Storage</h4>
+                <p>Manage browser-stored bookmarks, search cache, and configuration preferences.</p>
+              </div>
+
+              <div class="settings-control-row">
+                <div>
+                  <div style="font-weight:700;">Reset Settings</div>
+                  <div style="font-size:0.8rem; color:var(--text-muted);">Restore all preferences to default.</div>
+                </div>
+                <button type="button" class="btn btn--secondary btn--sm" id="resetSettingsBtn">Reset to Defaults</button>
+              </div>
+
+              <div class="settings-control-row">
+                <div>
+                  <div style="font-weight:700; color:var(--danger-color);">Clear Cached Data</div>
+                  <div style="font-size:0.8rem; color:var(--text-muted);">Deletes saved bookmarks, search history, and cache.</div>
+                </div>
+                <button type="button" class="btn btn--secondary btn--sm" style="color:var(--danger-color);" id="clearAllDataBtn">Clear All Data</button>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
       <!-- Footer -->
       <footer class="footer">
-        <p>Built with Vanilla HTML5, Modern CSS Glassmorphic Aesthetics, and GitHub REST API.</p>
-        <p>GitHub Developer Explorer v2.5</p>
+        <p>DevExplorer • GitHub Public Intelligence Suite v2.6</p>
+        <p>Respects public GitHub REST API quotas • Real data analysis</p>
       </footer>
     </main>
   </div>
 
-  <!-- Repository Detail Pop-up Modal -->
-  <div class="modal-overlay" id="repoDetailModal">
-    <div class="modal-container" id="repoModalBody"></div>
+  <!-- Repository Detail Modal -->
+  <div class="modal-overlay" id="repoDetailModal" role="dialog" aria-modal="true" aria-labelledby="modalRepoTitle">
+    <div class="modal-container" id="repoModalBody">
+      <!-- Populated dynamically by openRepoModal() -->
+    </div>
   </div>
 
   <!-- Toast Notification Container -->
-  <div class="toast-container" id="toastContainer"></div>
+  <div class="toast-container" id="toastContainer" aria-live="polite"></div>
 
-  <!-- JavaScript Files -->
+  <!-- JavaScript Modules -->
   <script src="./js/config.js"></script>
-  <script src="./js/state.js"></script>
   <script src="./js/utils.js"></script>
+  <script src="./js/state.js"></script>
   <script src="./js/api.js"></script>
   <script src="./js/render.js"></script>
   <script src="./js/main.js"></script>

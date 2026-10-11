@@ -1,98 +1,89 @@
-# GitHub Developer Explorer
+# DevExplorer — GitHub Developer Analytics (v2.6)
 
-GitHub Developer Explorer is a clean, responsive web application that utilizes the public GitHub REST API to search for any GitHub username and display developer profile details, repository data, stats, and a programming language breakdown.
+DevExplorer is a premium, high-performance developer intelligence platform that utilizes the official public GitHub REST API to provide deep real-time analytics for any public GitHub profile and repository ecosystem.
 
-## Project Overview
+## 🚀 Key Highlights & Features
 
-This project is built using pure HTML, CSS, and JavaScript. The main objective of this application is to demonstrate clean code organization, asynchronous API integration, state management, error handling, responsive design, and DOM manipulation without relying on third-party frameworks.
+### 1. Overview Dashboard
+* **Profile Insights:** Live avatar, display name, handle, bio, location, company, website link, Twitter handle, and account age.
+* **5 Core Metrics:** Public repositories count, followers, following, total stars, and total forks (with honest labeling regarding pagination).
+* **Most Starred Repositories Showcase:** Quick glance at the developer's most celebrated open-source projects.
+* **Compact Search Bar:** Instant username lookup with `⌘K` keyboard shortcut, clear button, and quick preset chips (Linus Torvalds, Dan Abramov, Evan You, Andrej Karpathy, etc.).
 
-## Features
+### 2. Repositories Explorer
+* **Live Search & Filters:** Filter repositories instantly by keyword (name, description, topics).
+* **Language & Topic Filters:** Dynamically populated language dropdown and interactive `#topic` chips.
+* **Sorting Modes:** Sort by Stars, Forks, Recently Updated, Recently Created, Name (A-Z), and Size.
+* **Layout Toggles:** Switch seamlessly between Grid View and Compact List View.
+* **Repository Detail Modal:** Inspect watchers, open issues, default branch, license, clone URL with one-click copy, and live **README preview** fetched directly from GitHub!
+* **Pagination (Load More):** Handles developers with >100 repositories with sequential pagination.
 
-* **Search by Username:** Quickly retrieve profile details for any valid GitHub user.
-* **API Integration:** Seamlessly fetches data from the GitHub REST API.
-* **Profile Insights:** Displays avatar, name, username, bio, location, company, website, and joined date.
-* **Key Statistics:** Highlights public repository count, followers, following, total stars, and total forks.
-* **Dynamic Repositories List:** Renders public repository cards with link references, stars, and forks count.
-* **Interactive Sorting:** Sort public repositories dynamically by:
-  * Most Stars
-  * Most Forks
-  * Recently Updated
-  * Name A-Z
-* **Language Breakdown:** Automatically calculates and displays a visual percentage breakdown of programming languages used across the user's repositories.
-* **Comprehensive Error Handling:** Gracefully handles empty searches, invalid usernames (404), API rate limit messages (403), and general network failures.
-* **Fully Responsive:** Adapts beautifully across mobile, tablet, and desktop viewports.
+### 3. Dedicated Language Intelligence
+* **Language Distribution:** Multi-segment percentage distribution bar.
+* **Language Metric Cards:** Deep dive into each language stack, percentage share, repo counts, and top repos written in that language.
+* **Interactive Navigation:** One-click filtering of repositories by selected language.
 
-## Tech Stack
+### 4. Head-to-Head Developer Comparison
+* **Parallel API Requests:** Compare two public GitHub accounts side-by-side using `Promise.allSettled`.
+* **Independent Error Handling:** If one handle is invalid, the other account still displays cleanly with clear error messaging.
+* **Side-by-Side Matrix:** Compare followers, stars, forks, repository counts, account ages, and top languages with subtle winner badges.
+* **Quick Tools:** Quick swap button (A ↔ B) and preset comparisons (e.g. Linus vs Karpathy, Dan vs Evan).
 
-* **Structure:** HTML5
-* **Styling:** CSS3 (Modular stylesheets with CSS variables)
-* **Logic:** Vanilla JavaScript (ES6+)
-* **API:** GitHub REST API
+### 5. Saved Profiles & Search History
+* **Profile Bookmarking:** Bookmark any developer to revisit their profile later.
+* **Search History:** Revisit recent searches with one click or clear history at any time.
+* **Safe Local Storage:** Stored locally in browser `localStorage` without secrets.
 
-## Folder Structure
+### 6. Settings & Personalization
+* **Dark & Light Mode:** Seamless toggle between technical dark mode and crisp high-contrast light mode.
+* **6 Accent Palettes:** Indigo, Cyan, Emerald, Amber, Violet, and Rose.
+* **Reduced Motion:** Accessibility support honoring `prefers-reduced-motion`.
+* **Data Management:** Storage usage overview with one-click reset.
+
+### 7. Export & Sharing Suite
+* **Shareable URL:** Copy direct URL with query parameters (`?user=username#overview`).
+* **Markdown Summary:** Copy executive Markdown summary for documentation and resumes.
+* **CSV Export:** Export full repository metadata into properly escaped `.csv` spreadsheet.
+* **JSON Export:** Download structured analytics report into `.json` format.
+* **Executive Print Mode:** Dedicated `@media print` stylesheet for clean, printable reports.
+
+## 🛠 Tech Stack & Architecture
+
+* **Markup:** Semantic HTML5 (`<main>`, `<aside>`, `<nav>`, `<section>`, `<article>`, `<header>`, `<footer>`)
+* **Styling:** Vanilla CSS with comprehensive CSS custom properties (design tokens) and responsive grid
+* **Scripting:** Modular Vanilla JavaScript ES6+ (No external framework dependencies)
+* **API:** GitHub Public REST API with in-memory caching, timeout safety, and rate-limit tracking
+
+### File Structure
 
 ```text
-github-developer-explorer/
-├── README.md
-├── index.html
-├── assets/
+├── index.html          # Semantic HTML shell with 6 view routes & modal
+├── README.md           # Documentation
 ├── css/
-│   ├── variables.css
-│   ├── base.css
-│   ├── layout.css
-│   ├── components.css
-│   └── responsive.css
+│   ├── variables.css   # Color tokens, light/dark themes, spacing, radii
+│   ├── base.css        # Resets, typography, print styles, accessibility
+│   ├── layout.css      # App grid, sidebar, topbar, view section router
+│   ├── components.css  # Buttons, cards, search, comparison, modal, toasts
+│   └── responsive.css  # Breakpoint rules (1440px, 1024px, 768px, 390px)
 └── js/
-    ├── config.js
-    ├── api.js
-    ├── state.js
-    ├── utils.js
-    ├── render.js
-    └── main.js
+    ├── config.js       # Endpoints, preset developers, comparisons, color map
+    ├── utils.js        # Formatting, CSV/JSON generators, storage, markdown parser
+    ├── state.js        # Reactive central application state & filter engine
+    ├── api.js          # API client with cache, timeout, abort, and pagination
+    ├── render.js       # View rendering functions, modals, toasts, skeletons
+    └── main.js         # Hash router, event bindings, keyboard shortcuts, boot
 ```
 
-## How It Works
+## 🌐 Running Locally
 
-1. **User Input:** The user types a GitHub username and triggers the search.
-2. **Sanitization:** The input is sanitized to prevent malformed API requests.
-3. **Data Fetching:** The app calls the GitHub REST API endpoints in parallel to fetch user info and repository data.
-4. **State Management:** The response data is loaded into the application state.
-5. **Dynamic Render:** The UI is rebuilt with the profile card, stats grid, interactive repository lists, and language progress bars.
-6. **Interaction:** Selecting a sorting method triggers a state update and re-renders the repositories instantly.
+You can serve this project with any local HTTP server:
 
-## GitHub API Endpoints Used
+```bash
+# Using Python
+python3 -m http.server 5500
 
-* **User Profile:** `GET https://api.github.com/users/{username}`
-* **User Repositories:** `GET https://api.github.com/users/{username}/repos?per_page=100&sort=updated`
+# Using Node.js
+npx serve .
+```
 
-## JavaScript Architecture
-
-* `config.js`: Stores API base URLs and configurations.
-* `api.js`: Handles API requests using `fetch` and custom status code checks.
-* `state.js`: Manages application state, selected repositories, and sorting actions.
-* `utils.js`: Houses formatting helpers (for numbers and dates), input sanitization, and language calculation utilities.
-* `render.js`: Handles UI DOM rendering templates, search indicators, skeletons, and error messaging.
-* `main.js`: Binds DOM event listeners and coordinates the main application initialization and flow.
-
-## Error Handling
-
-* **Empty Input:** Alerts the user immediately to enter a username before querying.
-* **Invalid Username (404):** Displays a user-friendly "No GitHub user found" error message.
-* **Rate Limit Reached (403):** Notifies the user when GitHub API limit is exhausted and guides them to try again later.
-* **Generic Failures:** Catches network connection drops or server errors, preventing application crashes.
-
-## Responsive Design
-
-* Employs modern CSS Layout systems (CSS Grid and Flexbox).
-* Organizes responsive breakpoints in `responsive.css` to ensure smooth desktop, tablet, and mobile viewing.
-* Scaling images, fluid text sizes, and column-shifting grids adapt dynamically to different screen dimensions.
-
-## Author
-
-* **Sankalp Tiwari (Zenthar)**
-* GitHub Username: [zenthar-dev](https://github.com/zenthar-dev)
-* GitHub Profile: [https://github.com/zenthar-dev](https://github.com/zenthar-dev)
-
-## Project Status
-
-* **Completed / Stable:** Main functions, styling, API integration, and layouts are fully operational.
+Open `http://localhost:5500` in your web browser.

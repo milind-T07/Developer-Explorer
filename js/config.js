@@ -1,9 +1,22 @@
+const APP_CONFIG = {
+  name: "DevExplorer",
+  descriptor: "GitHub Analytics",
+  version: "2.6.0",
+  timeoutMs: 12000,
+  cacheTtlMs: 300000, // 5 minutes
+  maxRetries: 1,
+  defaultUsername: "torvalds",
+  reposPerPage: 100
+};
+
 const GITHUB_API_BASE_URL = "https://api.github.com";
 
 const API_ENDPOINTS = {
   user: (username) => `${GITHUB_API_BASE_URL}/users/${username}`,
-  repositories: (username) =>
-    `${GITHUB_API_BASE_URL}/users/${username}/repos?per_page=100&sort=updated`,
+  repositories: (username, page = 1, perPage = 100) =>
+    `${GITHUB_API_BASE_URL}/users/${username}/repos?per_page=${perPage}&page=${page}&sort=updated`,
+  repo: (owner, repo) => `${GITHUB_API_BASE_URL}/repos/${owner}/${repo}`,
+  readme: (owner, repo) => `${GITHUB_API_BASE_URL}/repos/${owner}/${repo}/readme`,
   rateLimit: () => `${GITHUB_API_BASE_URL}/rate_limit`,
 };
 
@@ -15,8 +28,16 @@ const PRESET_DEVELOPERS = [
   { username: "karpathy", name: "Andrej Karpathy", role: "AI & Neural Networks Pioneer", avatar: "https://github.com/karpathy.png" },
   { username: "rich-harris", name: "Rich Harris", role: "Creator of Svelte & Rollup", avatar: "https://github.com/rich-harris.png" },
   { username: "sindresorhus", name: "Sindre Sorhus", role: "Prolific Open Source Author", avatar: "https://github.com/sindresorhus.png" },
-  { username: "mitchellh", name: "Mitchell Hashimoto", role: "Co-founder HashiCorp (Terraform/Vagrant)", avatar: "https://github.com/mitchellh.png" },
+  { username: "mitchellh", name: "Mitchell Hashimoto", role: "Co-founder HashiCorp", avatar: "https://github.com/mitchellh.png" },
   { username: "rauchg", name: "Guillermo Rauch", role: "CEO Vercel & Next.js Lead", avatar: "https://github.com/rauchg.png" },
+];
+
+// Presets for Developer Comparison
+const PRESET_COMPARISONS = [
+  { dev1: "torvalds", dev2: "karpathy", label: "Linus vs Karpathy" },
+  { dev1: "gaearon", dev2: "yyx99", label: "Dan vs Evan" },
+  { dev1: "rich-harris", dev2: "sindresorhus", label: "Rich vs Sindre" },
+  { dev1: "mitchellh", dev2: "rauchg", label: "Mitchell vs Guillermo" },
 ];
 
 // Comprehensive GitHub Language Colors Palette
@@ -62,5 +83,8 @@ const GITHUB_LANGUAGE_COLORS = {
   OCaml: "#ef7a08",
   "Vim Script": "#199f4b",
   Solidity: "#AA6746",
-  PowerShell: "#012456"
+  PowerShell: "#012456",
+  Markdown: "#083fa1",
+  SQL: "#e38c00",
+  Default: "#8b949e"
 };
