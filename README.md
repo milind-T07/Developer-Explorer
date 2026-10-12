@@ -26,7 +26,9 @@ DevExplorer is a premium, high-performance developer intelligence platform that 
 ### 4. Head-to-Head Developer Comparison
 * **Parallel API Requests:** Compare two public GitHub accounts side-by-side using `Promise.allSettled`.
 * **Independent Error Handling:** If one handle is invalid, the other account still displays cleanly with clear error messaging.
-* **Side-by-Side Matrix:** Compare followers, stars, forks, repository counts, account ages, and top languages with subtle winner badges.
+* **Side-by-Side Matrix:** Compare annual contributions (past 12 months), active contribution days, streaks, followers, stars, forks, repository counts, account ages, and top languages with subtle winner badges.
+* **Visual Contribution Heatmaps:** Real-time GitHub contribution calendar charts and activity level legends for each developer.
+* **Head-to-Head Contribution Share Bar:** Visual comparison bar showing the relative 12-month contribution distribution between both developers.
 * **Quick Tools:** Quick swap button (A ↔ B) and preset comparisons (e.g. Linus vs Karpathy, Dan vs Evan).
 
 ### 5. Saved Profiles & Search History

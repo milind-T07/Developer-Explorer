@@ -375,7 +375,7 @@ async function handleCompareSubmit(event) {
       <div class="empty-card">
         <span class="spin" style="font-size:2rem;">⏳</span>
         <h4>Comparing @${escapeHtml(u1)} and @${escapeHtml(u2)}</h4>
-        <p>Fetching metrics and public repositories...</p>
+        <p>Fetching contributions, metrics, and public repositories...</p>
       </div>
     `;
   }

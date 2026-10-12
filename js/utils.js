@@ -116,6 +116,70 @@ function calculateLanguageBreakdown(repositories) {
     .sort((a, b) => b.count - a.count);
 }
 
+function calculateContributionStats(contribData) {
+  if (!contribData) return null;
+  const total = contribData.total && typeof contribData.total.lastYear === "number"
+    ? contribData.total.lastYear
+    : (typeof contribData.total === "number" ? contribData.total : null);
+
+  const days = Array.isArray(contribData.contributions) ? contribData.contributions : [];
+  if (!days.length && total === null) return null;
+
+  let activeDays = 0;
+  let maxDayCount = 0;
+  let maxDayDate = null;
+  let longestStreak = 0;
+  let currentStreak = 0;
+  let tempStreak = 0;
+
+  // Ensure chronological order
+  const sortedDays = [...days].sort((a, b) => (a.date > b.date ? 1 : -1));
+
+  sortedDays.forEach((d) => {
+    const count = Number(d.count) || 0;
+    if (count > 0) {
+      activeDays++;
+      tempStreak++;
+      if (tempStreak > longestStreak) {
+        longestStreak = tempStreak;
+      }
+      if (count > maxDayCount) {
+        maxDayCount = count;
+        maxDayDate = d.date;
+      }
+    } else {
+      tempStreak = 0;
+    }
+  });
+
+  // Calculate current streak working backwards from most recent day
+  for (let i = sortedDays.length - 1; i >= 0; i--) {
+    const count = Number(sortedDays[i].count) || 0;
+    if (count > 0) {
+      currentStreak++;
+    } else if (i === sortedDays.length - 1) {
+      // If today has no contributions yet, allow yesterday's streak to count
+      continue;
+    } else {
+      break;
+    }
+  }
+
+  const totalDays = sortedDays.length || 365;
+  const computedTotal = total !== null ? total : sortedDays.reduce((sum, d) => sum + (Number(d.count) || 0), 0);
+
+  return {
+    total: computedTotal,
+    activeDays,
+    totalDays,
+    activePercent: totalDays > 0 ? Math.round((activeDays / totalDays) * 100) : 0,
+    longestStreak,
+    currentStreak,
+    maxDayCount,
+    maxDayDate
+  };
+}
+
 function animateValue(elementId, start, end, duration = 650) {
   const obj = document.getElementById(elementId);
   if (!obj) return;

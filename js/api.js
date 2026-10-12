@@ -181,6 +181,32 @@ async function fetchRepoReadme(owner, repo) {
   }
 }
 
+async function fetchUserContributions(username, signal) {
+  const cleanUsername = sanitizeUsername(username);
+  if (!cleanUsername) return null;
+
+  const cacheKey = `contrib_${cleanUsername.toLowerCase()}`;
+  const cached = getCachedData(cacheKey);
+  if (cached) return cached;
+
+  try {
+    const url = API_ENDPOINTS.contributions(cleanUsername);
+    const response = await fetchWithTimeout(url, { signal }, 8000);
+    if (!response.ok) {
+      return null;
+    }
+    const data = await response.json();
+    if (data && (data.total !== undefined || Array.isArray(data.contributions))) {
+      setCachedData(cacheKey, data);
+      return data;
+    }
+    return null;
+  } catch (err) {
+    console.warn(`Could not retrieve contribution stats for ${cleanUsername}:`, err);
+    return null;
+  }
+}
+
 async function fetchDeveloperComparison(user1, user2) {
   const clean1 = sanitizeUsername(user1);
   const clean2 = sanitizeUsername(user2);
@@ -189,19 +215,31 @@ async function fetchDeveloperComparison(user1, user2) {
     throw new Error("Please provide two GitHub handles to compare.");
   }
 
-  // Parallel fetch using Promise.allSettled so that if one fails, the other can still show
-  const [res1, res2] = await Promise.allSettled([
+  // Parallel fetch using Promise.allSettled so that if one fails or contributions fail, the other can still show
+  const [res1, res2, contrib1, contrib2] = await Promise.allSettled([
     Promise.all([fetchGitHubUser(clean1), fetchUserRepositories(clean1, 1, 100)]),
-    Promise.all([fetchGitHubUser(clean2), fetchUserRepositories(clean2, 1, 100)])
+    Promise.all([fetchGitHubUser(clean2), fetchUserRepositories(clean2, 1, 100)]),
+    fetchUserContributions(clean1),
+    fetchUserContributions(clean2)
   ]);
 
   return {
     dev1: res1.status === "fulfilled"
-      ? { user: res1.value[0], repositories: res1.value[1], error: null }
-      : { user: null, repositories: [], error: res1.reason.message },
+      ? {
+          user: res1.value[0],
+          repositories: res1.value[1],
+          contributions: contrib1.status === "fulfilled" ? contrib1.value : null,
+          error: null
+        }
+      : { user: null, repositories: [], contributions: null, error: res1.reason.message },
     dev2: res2.status === "fulfilled"
-      ? { user: res2.value[0], repositories: res2.value[1], error: null }
-      : { user: null, repositories: [], error: res2.reason.message },
+      ? {
+          user: res2.value[0],
+          repositories: res2.value[1],
+          contributions: contrib2.status === "fulfilled" ? contrib2.value : null,
+          error: null
+        }
+      : { user: null, repositories: [], contributions: null, error: res2.reason.message },
   };
 }
 

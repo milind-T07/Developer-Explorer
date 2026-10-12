@@ -1533,6 +1533,210 @@
   font-weight: 700;
 }
 
+/* Head-to-Head Contribution Share Banner */
+.compare-h2h-summary {
+  background: var(--bg-card);
+  border: 1px solid var(--accent-border);
+  border-radius: var(--border-radius-md);
+  padding: 1.1rem 1.35rem;
+  margin-bottom: 1.5rem;
+  box-shadow: var(--shadow-sm);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+}
+
+.compare-h2h-summary__meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.compare-h2h-user {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.compare-h2h-user--right {
+  justify-content: flex-end;
+}
+
+.compare-h2h-login {
+  font-weight: 700;
+  font-size: 0.92rem;
+  color: var(--text-primary);
+}
+
+.compare-h2h-count {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+}
+
+.compare-h2h-pct {
+  font-size: 0.84rem;
+  font-weight: 800;
+  color: var(--accent-highlight);
+  background: var(--accent-subtle);
+  padding: 0.15rem 0.45rem;
+  border-radius: 999px;
+  border: 1px solid var(--accent-border);
+}
+
+.compare-h2h-center {
+  text-align: center;
+}
+
+.compare-h2h-badge {
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.compare-h2h-track {
+  height: 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+  display: flex;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.compare-h2h-segment {
+  height: 100%;
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.compare-h2h-segment--dev1 {
+  background: linear-gradient(90deg, var(--accent-primary), #3b82f6);
+}
+
+.compare-h2h-segment--dev2 {
+  background: linear-gradient(90deg, #8b5cf6, #ec4899);
+}
+
+/* Compare Highlight Row for Contributions */
+.compare-row--highlight {
+  background: var(--accent-subtle);
+  margin: 0.35rem -0.5rem;
+  padding: 0.65rem 0.5rem;
+  border-radius: var(--border-radius-xs);
+  border-left: 3px solid var(--accent-primary);
+  border-bottom: 1px solid var(--accent-border);
+}
+
+.compare-row__icon {
+  margin-right: 0.3rem;
+  display: inline-block;
+}
+
+/* Developer Contribution Calendar Card in Compare */
+.compare-contrib-card {
+  margin-top: 1.25rem;
+  padding-top: 1.15rem;
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.compare-contrib-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.compare-contrib-card__left {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.compare-contrib-card__title {
+  color: var(--text-primary);
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+
+.compare-contrib-card__link {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--accent-primary);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+.compare-contrib-card__link:hover {
+  text-decoration: underline;
+  color: var(--accent-highlight);
+}
+
+.compare-chart-container {
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0.85rem 0.6rem;
+  border-radius: var(--border-radius-sm);
+  background: rgba(0, 0, 0, 0.32);
+  border: 1px solid var(--border-color);
+  display: flex;
+  justify-content: flex-start;
+  scrollbar-width: thin;
+}
+
+body[data-mode="light"] .compare-chart-container {
+  background: rgba(0, 0, 0, 0.03);
+}
+
+.compare-chart-img {
+  max-width: 100%;
+  height: auto;
+  min-width: 520px;
+  display: block;
+}
+
+.compare-chart-fallback {
+  padding: 1rem;
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  text-align: center;
+  width: 100%;
+}
+
+.compare-chart-fallback a {
+  color: var(--accent-primary);
+  text-decoration: underline;
+  font-weight: 600;
+}
+
+.compare-contrib-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.35rem;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+.compare-contrib-legend-label {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+.contrib-legend-box {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  display: inline-block;
+}
+
 /* Saved Profile Cards */
 .saved-card {
   padding: 1.25rem;

@@ -648,7 +648,7 @@ function renderCompareView(compareData) {
       <article class="empty-card">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M16 3h5v5"></path><path d="M4 20L21 3"></path><path d="M21 16v5h-5"></path><path d="M15 15l6 6"></path><path d="M4 4l5 5"></path></svg>
         <h4>Enter two usernames to compare</h4>
-        <p>Compare followers, stars, repository volume, account age, and top languages side-by-side.</p>
+        <p>Compare contributions, followers, stars, repository volume, account age, and top languages side-by-side.</p>
       </article>
     `;
     updateSectionStatus("compare", "Head-to-Head Analytics Ready", "Enter any two GitHub handles above or select a preset to generate a real-time comparison.", "info");
@@ -656,6 +656,43 @@ function renderCompareView(compareData) {
   }
 
   const { dev1, dev2 } = compareData;
+
+  // Head-to-Head Annual Contribution Share Banner
+  let h2hBanner = "";
+  if (dev1 && !dev1.error && dev2 && !dev2.error) {
+    const stats1 = calculateContributionStats(dev1.contributions);
+    const stats2 = calculateContributionStats(dev2.contributions);
+
+    if (stats1 && stats2 && typeof stats1.total === "number" && typeof stats2.total === "number" && (stats1.total > 0 || stats2.total > 0)) {
+      const sum = stats1.total + stats2.total;
+      const ratio1 = sum > 0 ? Math.round((stats1.total / sum) * 100) : 50;
+      const ratio2 = 100 - ratio1;
+
+      h2hBanner = `
+        <div class="compare-h2h-summary">
+          <div class="compare-h2h-summary__meta">
+            <div class="compare-h2h-user">
+              <span class="compare-h2h-login">@${escapeHtml(dev1.user.login)}</span>
+              <span class="compare-h2h-count">${formatNumber(stats1.total)} contribs</span>
+              <span class="compare-h2h-pct">${ratio1}%</span>
+            </div>
+            <div class="compare-h2h-center">
+              <span class="compare-h2h-badge">⚡ 12-Month Contribution Distribution</span>
+            </div>
+            <div class="compare-h2h-user compare-h2h-user--right">
+              <span class="compare-h2h-pct">${ratio2}%</span>
+              <span class="compare-h2h-count">${formatNumber(stats2.total)} contribs</span>
+              <span class="compare-h2h-login">@${escapeHtml(dev2.user.login)}</span>
+            </div>
+          </div>
+          <div class="compare-h2h-track">
+            <div class="compare-h2h-segment compare-h2h-segment--dev1" style="width: ${ratio1}%;" title="@${escapeHtml(dev1.user.login)}: ${ratio1}% (${formatNumber(stats1.total)} contributions)"></div>
+            <div class="compare-h2h-segment compare-h2h-segment--dev2" style="width: ${ratio2}%;" title="@${escapeHtml(dev2.user.login)}: ${ratio2}% (${formatNumber(stats2.total)} contributions)"></div>
+          </div>
+        </div>
+      `;
+    }
+  }
 
   const renderSide = (dev, otherDev) => {
     if (dev.error) {
@@ -683,6 +720,10 @@ function renderCompareView(compareData) {
     const otherForks = otherRepos.reduce((sum, r) => sum + (r.forks_count || 0), 0);
     const otherUser = otherDev && otherDev.user ? otherDev.user : null;
 
+    // Contribution Analytics
+    const stats = calculateContributionStats(dev.contributions);
+    const otherStats = calculateContributionStats(otherDev && !otherDev.error ? otherDev.contributions : null);
+
     const isWinner = (val1, val2) => val1 > val2 && val1 > 0;
 
     return `
@@ -696,6 +737,45 @@ function renderCompareView(compareData) {
         </div>
 
         <p style="color:var(--text-secondary); font-size:0.86rem; margin-bottom:1rem; line-height:1.5;">${escapeHtml(getFallbackText(u.bio, "No bio provided."))}</p>
+
+        <!-- Annual Contributions Primary Row -->
+        <div class="compare-row compare-row--highlight">
+          <span class="compare-row__label">
+            <span class="compare-row__icon">🔥</span>
+            <span>Contributions (Past Year)</span>
+          </span>
+          <span class="compare-row__value font-heading">
+            ${stats && stats.total !== null ? formatNumber(stats.total) : (stats ? "0" : '<span style="color:var(--text-muted); font-size:0.8rem;">Available via calendar</span>')}
+            ${stats && otherStats && stats.total !== null && otherStats.total !== null && isWinner(stats.total, otherStats.total) ? '<span class="winner-badge">Higher</span>' : ""}
+          </span>
+        </div>
+
+        ${stats ? `
+        <div class="compare-row">
+          <span class="compare-row__label">Active Contribution Days</span>
+          <span class="compare-row__value">
+            ${stats.activeDays} days <span style="color:var(--text-muted); font-size:0.78rem;">(${stats.activePercent}%)</span>
+            ${otherStats && isWinner(stats.activeDays, otherStats.activeDays) ? '<span class="winner-badge">Higher</span>' : ""}
+          </span>
+        </div>
+
+        <div class="compare-row">
+          <span class="compare-row__label">Longest Streak</span>
+          <span class="compare-row__value">
+            ${stats.longestStreak > 0 ? `${stats.longestStreak} days` : "0 days"}
+            ${otherStats && isWinner(stats.longestStreak, otherStats.longestStreak) ? '<span class="winner-badge">Higher</span>' : ""}
+          </span>
+        </div>
+
+        ${stats.maxDayCount > 0 ? `
+        <div class="compare-row">
+          <span class="compare-row__label">Peak Day Volume</span>
+          <span class="compare-row__value" style="font-size:0.8rem;">
+            ${formatDate(stats.maxDayDate)} (${stats.maxDayCount} contribs)
+          </span>
+        </div>
+        ` : ""}
+        ` : ""}
 
         <div class="compare-row">
           <span class="compare-row__label">Followers</span>
@@ -755,11 +835,43 @@ function renderCompareView(compareData) {
             ${topRepo ? `<a href="${topRepo.html_url}" target="_blank" rel="noopener" style="color:var(--accent-primary); text-decoration:underline;">${escapeHtml(topRepo.name)} (${formatNumber(topRepo.stargazers_count)}⭐)</a>` : "None"}
           </span>
         </div>
+
+        <!-- Visual Contribution Activity Heatmap -->
+        <div class="compare-contrib-card">
+          <div class="compare-contrib-card__header">
+            <div class="compare-contrib-card__left">
+              <svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor" style="color:var(--success-color);"><path d="M1 2.75C1 1.784 1.784 1 2.75 1h10.5c.966 0 1.75.784 1.75 1.75v10.5A1.75 1.75 0 0 1 13.25 15H2.75A1.75 1.75 0 0 1 1 13.25Zm1.75-.25a.25.25 0 0 0-.25.25v10.5c0 .138.112.25.25.25h10.5a.25.25 0 0 0 .25-.25V2.75a.25.25 0 0 0-.25-.25ZM4.75 4a.75.75 0 0 1 .75.75v6.5a.75.75 0 0 1-1.5 0v-6.5A.75.75 0 0 1 4.75 4Zm3.25.75v6.5a.75.75 0 0 1-1.5 0v-6.5a.75.75 0 0 1 1.5 0Zm2.5 0v6.5a.75.75 0 0 1-1.5 0v-6.5a.75.75 0 0 1 1.5 0Z"></path></svg>
+              <span class="compare-contrib-card__title">Contribution Calendar</span>
+            </div>
+            <a href="https://github.com/${escapeHtml(u.login)}" target="_blank" rel="noopener noreferrer" class="compare-contrib-card__link">
+              GitHub Profile ↗
+            </a>
+          </div>
+          <div class="compare-chart-container">
+            <img 
+              src="https://ghchart.rshah.org/2ea043/${escapeHtml(u.login)}" 
+              alt="${escapeHtml(u.login)} contribution calendar" 
+              class="compare-chart-img" 
+              loading="lazy"
+              onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\\'compare-chart-fallback\\'>Contribution calendar available directly on <a href=\\'https://github.com/${escapeHtml(u.login)}\\' target=\\'_blank\\' rel=\\'noopener\\'>GitHub Profile ↗</a></div>';"
+            />
+          </div>
+          <div class="compare-contrib-footer">
+            <span class="compare-contrib-legend-label">Less</span>
+            <span class="contrib-legend-box" style="background:rgba(255,255,255,0.06); border:1px solid var(--border-color);"></span>
+            <span class="contrib-legend-box" style="background:#0e4429;"></span>
+            <span class="contrib-legend-box" style="background:#006d32;"></span>
+            <span class="contrib-legend-box" style="background:#26a641;"></span>
+            <span class="contrib-legend-box" style="background:#39d353;"></span>
+            <span class="compare-contrib-legend-label">More</span>
+          </div>
+        </div>
       </div>
     `;
   };
 
   container.innerHTML = `
+    ${h2hBanner}
     <div class="compare-matrix-grid">
       ${renderSide(dev1, dev2)}
       ${renderSide(dev2, dev1)}

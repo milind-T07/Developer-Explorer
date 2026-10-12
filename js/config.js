@@ -25,6 +25,8 @@ const API_ENDPOINTS = {
   repo: (owner, repo) => `${GITHUB_API_BASE_URL}/repos/${owner}/${repo}`,
   readme: (owner, repo) => `${GITHUB_API_BASE_URL}/repos/${owner}/${repo}/readme`,
   rateLimit: () => `${GITHUB_API_BASE_URL}/rate_limit`,
+  contributions: (username) => `https://github-contributions-api.jogruber.de/v4/${encodeURIComponent(username)}?y=last`,
+  contributionChart: (username, color = "2ea043") => `https://ghchart.rshah.org/${color}/${encodeURIComponent(username)}`,
 };
 
 // Popular global repository search suggestions
