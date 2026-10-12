@@ -2,7 +2,8 @@
 .app {
   min-height: 100vh;
   display: grid;
-  grid-template-columns: var(--sidebar-width) 1fr;
+  grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
+  width: 100%;
 }
 
 /* Hide Mobile Elements on Desktop */
@@ -95,6 +96,8 @@
   max-width: 1440px;
   padding: 1.5rem 2rem 3rem;
   margin: 0 auto;
+  min-width: 0;
+  box-sizing: border-box;
 }
 
 /* Topbar Header */
@@ -275,21 +278,28 @@
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
   box-shadow: var(--shadow-card);
+  width: 100%;
+  box-sizing: border-box;
+  min-width: 0;
 }
 
 .compare-inputs-grid {
   display: grid;
-  grid-template-columns: 1fr auto 1fr auto;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto;
   gap: 0.75rem;
   align-items: center;
   margin-bottom: 1.25rem;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .compare-matrix-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 1.5rem;
   margin-top: 1.5rem;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 /* Saved Section Layout */

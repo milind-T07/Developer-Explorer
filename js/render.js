@@ -745,36 +745,19 @@ function renderCompareView(compareData) {
             <span>Contributions (Past Year)</span>
           </span>
           <span class="compare-row__value font-heading">
-            ${stats && stats.total !== null ? formatNumber(stats.total) : (stats ? "0" : '<span style="color:var(--text-muted); font-size:0.8rem;">Available via calendar</span>')}
+            ${stats && stats.total !== null ? formatNumber(stats.total) : (stats ? "0" : '<span style="color:var(--text-muted); font-size:0.8rem;">Not available</span>')}
             ${stats && otherStats && stats.total !== null && otherStats.total !== null && isWinner(stats.total, otherStats.total) ? '<span class="winner-badge">Higher</span>' : ""}
           </span>
         </div>
 
-        ${stats ? `
-        <div class="compare-row">
-          <span class="compare-row__label">Active Contribution Days</span>
-          <span class="compare-row__value">
-            ${stats.activeDays} days <span style="color:var(--text-muted); font-size:0.78rem;">(${stats.activePercent}%)</span>
-            ${otherStats && isWinner(stats.activeDays, otherStats.activeDays) ? '<span class="winner-badge">Higher</span>' : ""}
-          </span>
-        </div>
-
+        ${stats && stats.longestStreak > 0 ? `
         <div class="compare-row">
           <span class="compare-row__label">Longest Streak</span>
           <span class="compare-row__value">
-            ${stats.longestStreak > 0 ? `${stats.longestStreak} days` : "0 days"}
+            ${stats.longestStreak} days
             ${otherStats && isWinner(stats.longestStreak, otherStats.longestStreak) ? '<span class="winner-badge">Higher</span>' : ""}
           </span>
         </div>
-
-        ${stats.maxDayCount > 0 ? `
-        <div class="compare-row">
-          <span class="compare-row__label">Peak Day Volume</span>
-          <span class="compare-row__value" style="font-size:0.8rem;">
-            ${formatDate(stats.maxDayDate)} (${stats.maxDayCount} contribs)
-          </span>
-        </div>
-        ` : ""}
         ` : ""}
 
         <div class="compare-row">
@@ -834,37 +817,6 @@ function renderCompareView(compareData) {
           <span class="compare-row__value" style="font-size:0.8rem;">
             ${topRepo ? `<a href="${topRepo.html_url}" target="_blank" rel="noopener" style="color:var(--accent-primary); text-decoration:underline;">${escapeHtml(topRepo.name)} (${formatNumber(topRepo.stargazers_count)}⭐)</a>` : "None"}
           </span>
-        </div>
-
-        <!-- Visual Contribution Activity Heatmap -->
-        <div class="compare-contrib-card">
-          <div class="compare-contrib-card__header">
-            <div class="compare-contrib-card__left">
-              <svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor" style="color:var(--success-color);"><path d="M1 2.75C1 1.784 1.784 1 2.75 1h10.5c.966 0 1.75.784 1.75 1.75v10.5A1.75 1.75 0 0 1 13.25 15H2.75A1.75 1.75 0 0 1 1 13.25Zm1.75-.25a.25.25 0 0 0-.25.25v10.5c0 .138.112.25.25.25h10.5a.25.25 0 0 0 .25-.25V2.75a.25.25 0 0 0-.25-.25ZM4.75 4a.75.75 0 0 1 .75.75v6.5a.75.75 0 0 1-1.5 0v-6.5A.75.75 0 0 1 4.75 4Zm3.25.75v6.5a.75.75 0 0 1-1.5 0v-6.5a.75.75 0 0 1 1.5 0Zm2.5 0v6.5a.75.75 0 0 1-1.5 0v-6.5a.75.75 0 0 1 1.5 0Z"></path></svg>
-              <span class="compare-contrib-card__title">Contribution Calendar</span>
-            </div>
-            <a href="https://github.com/${escapeHtml(u.login)}" target="_blank" rel="noopener noreferrer" class="compare-contrib-card__link">
-              GitHub Profile ↗
-            </a>
-          </div>
-          <div class="compare-chart-container">
-            <img 
-              src="https://ghchart.rshah.org/2ea043/${escapeHtml(u.login)}" 
-              alt="${escapeHtml(u.login)} contribution calendar" 
-              class="compare-chart-img" 
-              loading="lazy"
-              onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\\'compare-chart-fallback\\'>Contribution calendar available directly on <a href=\\'https://github.com/${escapeHtml(u.login)}\\' target=\\'_blank\\' rel=\\'noopener\\'>GitHub Profile ↗</a></div>';"
-            />
-          </div>
-          <div class="compare-contrib-footer">
-            <span class="compare-contrib-legend-label">Less</span>
-            <span class="contrib-legend-box" style="background:rgba(255,255,255,0.06); border:1px solid var(--border-color);"></span>
-            <span class="contrib-legend-box" style="background:#0e4429;"></span>
-            <span class="contrib-legend-box" style="background:#006d32;"></span>
-            <span class="contrib-legend-box" style="background:#26a641;"></span>
-            <span class="contrib-legend-box" style="background:#39d353;"></span>
-            <span class="compare-contrib-legend-label">More</span>
-          </div>
         </div>
       </div>
     `;
