@@ -185,9 +185,11 @@ async function handleDeveloperSearch(event) {
   }
 }
 
-function scrollToProfileOverview() {
+function smoothScrollToElement(targetSelectorOrEl, topMargin = 20, delayMs = 140) {
   setTimeout(() => {
-    const target = document.getElementById("statusSection");
+    const target = typeof targetSelectorOrEl === "string"
+      ? (document.getElementById(targetSelectorOrEl) || document.querySelector(targetSelectorOrEl))
+      : targetSelectorOrEl;
     if (!target) return;
 
     const isReducedMotion = document.body.classList.contains("reduced-motion") ||
@@ -196,7 +198,6 @@ function scrollToProfileOverview() {
     const isMobile = window.innerWidth <= 900;
     const mobileHeader = document.querySelector(".mobile-header");
     const headerHeight = (isMobile && mobileHeader) ? mobileHeader.offsetHeight : 0;
-    const topMargin = 20;
 
     const targetPosition = target.getBoundingClientRect().top + window.pageYOffset - (headerHeight + topMargin);
 
@@ -204,7 +205,19 @@ function scrollToProfileOverview() {
       top: Math.max(0, targetPosition),
       behavior: isReducedMotion ? "auto" : "smooth"
     });
-  }, 120);
+  }, delayMs);
+}
+
+function scrollToProfileOverview() {
+  smoothScrollToElement("statusSection", 20);
+}
+
+function scrollToRepoSearchResults() {
+  smoothScrollToElement(".repo-status-header", 20);
+}
+
+function scrollToCompareResults() {
+  smoothScrollToElement("compareMatrixContainer", 20);
 }
 
 function updateSearchButtonLoading(loading) {
@@ -284,6 +297,9 @@ async function handleGlobalRepoSearch(event) {
     setGlobalRepoLoading(false);
     updateGlobalRepoSearchButton(false);
     renderGlobalRepositories();
+    if (!appState.repoSearchError && appState.repoSearchResults && appState.repoSearchResults.length > 0) {
+      scrollToRepoSearchResults();
+    }
   }
 }
 
@@ -385,6 +401,7 @@ async function handleCompareSubmit(event) {
     appState.compareState = result;
     renderCompareView(result);
     showToast(`Compared @${u1} vs @${u2}`, "success");
+    scrollToCompareResults();
   } catch (err) {
     showToast(err.message, "error");
   } finally {
