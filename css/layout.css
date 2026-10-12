@@ -250,6 +250,17 @@
   color: var(--text-muted);
 }
 
+#globalRepoCountText {
+  color: var(--text-secondary);
+  transition: color 0.2s ease;
+}
+
+#globalRepoCountText.repo-count-text--success,
+.repo-count-text--success {
+  color: var(--success-color) !important;
+  font-weight: 700;
+}
+
 .repositories-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));

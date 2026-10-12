@@ -481,7 +481,11 @@ function renderGlobalRepositories() {
   // 1. Loading State
   if (appState.repoSearchLoading) {
     grid.innerHTML = Array(6).fill(0).map(() => `<div class="repo-card skeleton" style="height: 190px;"></div>`).join("");
-    if (countText) countText.textContent = `Searching GitHub for "${appState.repoSearchQuery}"...`;
+    if (countText) {
+      countText.textContent = `Searching GitHub for "${appState.repoSearchQuery}"...`;
+      countText.classList.remove("repo-count-text--success");
+      countText.style.color = "";
+    }
     if (paginationNotice) paginationNotice.textContent = "";
     if (loadMoreContainer) loadMoreContainer.innerHTML = "";
     updateSectionStatus("globalRepo", "Querying GitHub REST API", `Searching public repositories matching "${appState.repoSearchQuery}"...`, "loading");
@@ -498,7 +502,11 @@ function renderGlobalRepositories() {
         <button type="button" class="btn btn--secondary" onclick="retryGlobalRepoSearch()" style="margin-top:0.75rem;">Retry Search</button>
       </article>
     `;
-    if (countText) countText.textContent = "Search error";
+    if (countText) {
+      countText.textContent = "Search error";
+      countText.classList.remove("repo-count-text--success");
+      countText.style.color = "";
+    }
     if (paginationNotice) paginationNotice.textContent = "";
     if (loadMoreContainer) loadMoreContainer.innerHTML = "";
     updateSectionStatus("globalRepo", "Unable to Retrieve Repositories", appState.repoSearchError, "error");
@@ -543,7 +551,11 @@ function renderGlobalRepositories() {
         </div>
       </article>
     `;
-    if (countText) countText.textContent = "Search GitHub repositories to discover projects";
+    if (countText) {
+      countText.textContent = "Search GitHub repositories to discover projects";
+      countText.classList.remove("repo-count-text--success");
+      countText.style.color = "";
+    }
     if (paginationNotice) paginationNotice.textContent = "";
     if (loadMoreContainer) loadMoreContainer.innerHTML = "";
     updateSectionStatus("globalRepo", "Global Repository Discovery Ready", "Enter keywords or choose a suggested topic to explore open-source repositories.", "info");
@@ -560,7 +572,11 @@ function renderGlobalRepositories() {
         <button type="button" class="btn btn--secondary" onclick="resetGlobalRepoSearchFilters()" style="margin-top:0.75rem;">Reset Filters</button>
       </article>
     `;
-    if (countText) countText.textContent = `0 results for "${appState.repoSearchQuery}"`;
+    if (countText) {
+      countText.textContent = `0 results for "${appState.repoSearchQuery}"`;
+      countText.classList.remove("repo-count-text--success");
+      countText.style.color = "";
+    }
     if (paginationNotice) paginationNotice.textContent = "";
     if (loadMoreContainer) loadMoreContainer.innerHTML = "";
     updateSectionStatus("globalRepo", "Zero Matching Repositories", `No public repositories found for query "${appState.repoSearchQuery}". Try broader search terms.`, "warning");
@@ -572,6 +588,8 @@ function renderGlobalRepositories() {
   const loaded = appState.repoSearchResults.length;
   if (countText) {
     countText.textContent = `Found ${formatNumber(total)} repositories for "${appState.repoSearchQuery}" (Showing ${loaded})`;
+    countText.classList.add("repo-count-text--success");
+    countText.style.color = "var(--success-color)";
   }
   if (paginationNotice) {
     paginationNotice.textContent = total > 1000 ? "• Note: GitHub API limits search to top 1,000 results" : "";
